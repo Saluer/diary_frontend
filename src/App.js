@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Route } from "react-router-dom";
-import CategoriesList from "./CategoriesList";
-import CategoryCreateUpdate from "./CategoryCreateUpdate";
+import Category from "./Category";
+// import CategoryCreateUpdateForm from "./CategoryCreateUpdateForm";
 import "./App.css";
 
 const BaseLayout = () => (
 	<div className="container-fluid">
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<a className="navbar-brand">Django React Demo</a>
+			<h6 className="navbar-brand">Django React Demo</h6>
 			<button
 				className="navbar-toggler"
 				type="button"
@@ -32,9 +32,9 @@ const BaseLayout = () => (
 			</div>
 		</nav>
 		<div className="content">
-			<Route path="/" exact component={CategoriesList} />
-			<Route path="/category/:pk" component={CategoryCreateUpdate} />
-			<Route path="/category/" exact component={CategoryCreateUpdate} />
+			<Route path="/" exact component={Category} />
+			<Route path="/category/:id"  component={Category} /> 
+			{/* <Route path="/category/" exact component={CategoryCreateUpdateForm} /> */}
 		</div>
 	</div>
 );
