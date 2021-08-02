@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from "react";
 
 import CategoryService from "./CategoryService";
-import { Link } from "react-router-dom";
+import { Route, Link } from "react-router-dom";
+
+
 const categoryService = new CategoryService();
 
 const Category = (props) => {
-	console.log(
-		"🚀 ~ file: CategoriesList.js ~ line 8 ~ Category ~ props",
-		props
-	);
+	console.log("🚀 ~ file: Category.js ~ line 8 ~ Category ~ props", props);
 	const [categories, setCategories] = useState([]);
 	const [nextPageURL, setNextPageURL] = useState("");
 	const id = props.match.params.id;
+
 	useEffect(() => {
-		categoryService
-			.getCategories(id)
-			.then(function (result) {
-				setCategories(result.data);
-				setNextPageURL(result.nextLink);
-				console.log(result.nextLink)
-			});
+		categoryService.getCategories(id).then(function (result) {
+			setCategories(result.data);
+			setNextPageURL(result.nextLink);
+			console.log(result.data);
+		});
 	}, [id]);
 
 	const handleDelete = (e, id) => {
@@ -28,14 +26,12 @@ const Category = (props) => {
 				return obj.id !== id;
 			});
 
-			setCategories({ categories: newArr });
+			setCategories(newArr);
 		});
 	};
 
 	const nextPage = () => {
 		categoryService.getCategoriesByURL(nextPageURL).then((result) => {
-            console.log("🚀 ~ file: Category.js ~ line 36 ~ categoryService.getCategoriesByURL ~ nextPageURL", nextPageURL)
-            console.log("🚀 ~ file: Category.js ~ line 36 ~ categoryService.getCategoriesByURL ~ result", result)
 			setCategories(result.data);
 			setNextPageURL(result.nextLink);
 		});
@@ -56,8 +52,13 @@ const Category = (props) => {
 							<td>{c.id} </td>
 							<td>{c.name}</td>
 							<td>
-								<Link to={"/category/" + c.id}>
-									<button className="btn btn-primary" >
+								<Link
+									to={{
+										pathname: "/category/" + c.id,
+									}}
+								>
+									
+									<button className="btn btn-primary">
 										Перейти в категорию
 									</button>
 								</Link>
@@ -74,12 +75,30 @@ const Category = (props) => {
 					))}
 				</tbody>
 			</table>
+			<button className="btn btn-secondary mr-3" onClick={nextPage}>
+				Next
+			</button>
 			{
-				<button className="btn btn-primary" onClick={nextPage}>
-					Next
-				</button>
+				//TODO Подумать над улучшением кода
 			}
+			{id ? (
+				<Link to={id + "/form"}>
+					<button className="btn btn-primary" onClick={nextPage}>
+						Добавить категорию
+					</button>
+				</Link>
+			) : (
+				!id && (
+					<Link to={"/form"}>
+						<button className="btn btn-primary" onClick={nextPage}>
+							Добавить категорию
+						</button>
+					</Link>
+				)
+			)}
 		</div>
 	);
 };
+
+
 export default Category;

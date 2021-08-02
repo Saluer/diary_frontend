@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { Route } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import Category from "./Category";
-// import CategoryCreateUpdateForm from "./CategoryCreateUpdateForm";
+import CategoryCreateUpdateForm from "./CategoryCreateUpdateForm";
 import "./App.css";
 
 const BaseLayout = () => (
 	<div className="container-fluid">
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<h6 className="navbar-brand">Django React Demo</h6>
+			<p className="navbar-brand">Django React Demo</p>
 			<button
 				className="navbar-toggler"
 				type="button"
@@ -22,19 +22,24 @@ const BaseLayout = () => (
 			</button>
 			<div className="collapse navbar-collapse" id="navbarNavAltMarkup">
 				<div className="navbar-nav">
-					<a className="nav-item nav-link" href="/">
+					<Link className="nav-item nav-link" to="/">
 						Categories
-					</a>
-					<a className="nav-item nav-link" href="/category">
+					</Link>
+					{/* <Link className="nav-item nav-link" to="/category">
 						Create category
-					</a>
+					</Link> */}
 				</div>
 			</div>
 		</nav>
 		<div className="content">
 			<Route path="/" exact component={Category} />
-			<Route path="/category/:id"  component={Category} /> 
-			{/* <Route path="/category/" exact component={CategoryCreateUpdateForm} /> */}
+			<Route path="/category/:id" component={Category} />
+			<Route path="/form" exactfe component={CategoryCreateUpdateForm} />
+			<Route
+				path="/category/:id/form"
+				exact
+				component={CategoryCreateUpdateForm}
+			/>
 		</div>
 	</div>
 );

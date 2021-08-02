@@ -73,7 +73,9 @@ const CategoryCreateUpdateForm = (props) => {
 					value={name}
 					onChange={handleChange}
 				/>
-
+				
+				<label className="form-label">Надкатегория:</label>
+				<select className="form-select"></select>
 				<input className="btn btn-primary" type="submit" value="Submit" />
 			</div>
 		</form>
