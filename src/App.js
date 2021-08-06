@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { Link, Route } from "react-router-dom";
+import { Link} from "react-router-dom";
 import Category from "./Category";
-import CategoryCreateUpdateForm from "./CategoryCreateUpdateForm";
+
 import "./App.css";
 
 const BaseLayout = () => (
@@ -32,14 +32,7 @@ const BaseLayout = () => (
 			</div>
 		</nav>
 		<div className="content">
-			<Route path="/" exact component={Category} />
-			<Route path="/category/:id" component={Category} />
-			<Route path="/form" exactfe component={CategoryCreateUpdateForm} />
-			<Route
-				path="/category/:id/form"
-				exact
-				component={CategoryCreateUpdateForm}
-			/>
+			<Category/>
 		</div>
 	</div>
 );

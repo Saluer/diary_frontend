@@ -3,8 +3,8 @@ const API_URL = "http://localhost:8000";
 
 export default class CategoryService {
 
-	getCategories(uppcat_id="") {
-		const url = `${API_URL}/api/categories/${uppcat_id}`;
+	getCategories(upperCategoryID="") {
+		const url = `${API_URL}/api/categories/${upperCategoryID}`;
 		return axios.get(url).then((response) => response.data);
 	}
 	getCategoriesByURL(link) {
@@ -19,8 +19,9 @@ export default class CategoryService {
 		const url = `${API_URL}/api/categories/${category.id}`;
 		return axios.delete(url);
 	}
-	createCategory(category, uppcat_id="") {
-		const url = `${API_URL}/api/categories/${uppcat_id}`;
+	createCategory(category, upperCategoryID="") {
+        console.log("🚀 ~ file: CategoryService.js ~ line 23 ~ CategoryService ~ createCategory ~ upperCategoryID", upperCategoryID)
+		const url = `${API_URL}/api/categories/${upperCategoryID}`;
 		return axios.post(url, category);
 	}
 	updateCategory(category) {

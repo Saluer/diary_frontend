@@ -4,27 +4,35 @@ import CategoryService from "./CategoryService";
 const categoryService = new CategoryService();
 
 const CategoryCreateUpdateForm = (props) => {
+	console.log(
+		"🚀 ~ file: CategoryCreateUpdateForm.js ~ line 7 ~ CategoryCreateUpdateForm ~ props",
+		props
+	);
 	const [name, setName] = useState("");
-
+	const [upperCategoryName, setUpperCategoryName] = useState("");
+	const {
+		match: { params },
+	} = props;
 	useEffect(() => {
-		const {
-			match: { params },
-		} = props;
-
 		if (params && params.id) {
-			categoryService.getCategory(params.id).then((c) => {
-				setName(c.name);
+			categoryService.getCategories(params.id).then((c) => {
+				setUpperCategoryName(c.upper_category.name);
 			});
-		}
-	}, [props]);
+		} else params.id = "";
+		return () => {
+			setName("");
+			setUpperCategoryName("");
+		};
+	}, [params]);
 
 	const handleCreate = () => {
+		console.log(params.id, name);
 		categoryService
 			.createCategory({
-				name: name,
-			})
+				category_name: name,
+			}, params.id,)
 			.then((result) => {
-				alert("Category created!");
+				alert(result);
 			})
 			.catch(() => {
 				alert("There was an error! Please re-check your form.");
@@ -46,15 +54,7 @@ const CategoryCreateUpdateForm = (props) => {
 	};
 
 	const handleSubmit = (event) => {
-		const {
-			match: { params },
-		} = props;
-
-		if (params && params.id) {
-			handleUpdate(params.id);
-		} else {
-			handleCreate();
-		}
+		handleCreate();
 
 		event.preventDefault();
 	};
@@ -66,6 +66,9 @@ const CategoryCreateUpdateForm = (props) => {
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className="form-group">
+				<label className="form-label">Надкатегория:</label>
+				<span className="mx-2 font-italic text-info">{upperCategoryName}</span>
+				<br />
 				<label>Название:</label>
 				<input
 					className="form-control"
@@ -73,10 +76,7 @@ const CategoryCreateUpdateForm = (props) => {
 					value={name}
 					onChange={handleChange}
 				/>
-				
-				<label className="form-label">Надкатегория:</label>
-				<select className="form-select"></select>
-				<input className="btn btn-primary" type="submit" value="Submit" />
+				<input className="btn btn-primary mt-2" type="submit" value="Submit" />
 			</div>
 		</form>
 	);

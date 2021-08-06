@@ -1,31 +1,53 @@
 import React, { useState, useEffect } from "react";
-
 import CategoryService from "./CategoryService";
-import { Route, Link } from "react-router-dom";
-
+import { Switch, Route, Link, useParams, useRouteMatch } from "react-router-dom";
+import CategoryCreateUpdateForm from "./CategoryCreateUpdateForm";
 
 const categoryService = new CategoryService();
 
-const Category = (props) => {
-	console.log("🚀 ~ file: Category.js ~ line 8 ~ Category ~ props", props);
+const Category = () => {
+	return (
+		<Switch>
+			<Route path="/" exact component={CategoryList} />
+			<Route path="/category/:id" exact component={CategoryList} />
+			<Route path="/form"  exact component={CategoryCreateUpdateForm} />
+			<Route
+				path="/category/:id/form"
+				exact
+				component={CategoryCreateUpdateForm}
+			/>
+		</Switch>
+	);
+};
+
+const CategoryList = (props) => {
 	const [categories, setCategories] = useState([]);
 	const [nextPageURL, setNextPageURL] = useState("");
-	const id = props.match.params.id;
-
+	const [upperCategoryName, setUpperCategoryName] = useState("");
+	//? Нужно ли?
+	const match = useRouteMatch();
+    console.log("🚀 ~ file: Category.js ~ line 28 ~ CategoryList ~ match", match)
+	const { id } = useParams();
+	
 	useEffect(() => {
 		categoryService.getCategories(id).then(function (result) {
 			setCategories(result.data);
 			setNextPageURL(result.nextLink);
-			console.log(result.data);
+			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
+			setUpperCategoryName(result.upper_category.name);
 		});
-	}, [id]);
-
+		return(()=>{
+			setCategories([]);
+			setNextPageURL("");
+			setUpperCategoryName("");
+		})
+	}, [match, id]);
+	
 	const handleDelete = (e, id) => {
 		categoryService.deleteCategory({ id: id }).then(() => {
 			var newArr = categories.filter(function (obj) {
 				return obj.id !== id;
 			});
-
 			setCategories(newArr);
 		});
 	};
@@ -39,6 +61,7 @@ const Category = (props) => {
 
 	return (
 		<div className="categories--list">
+			<h2>{upperCategoryName}</h2>
 			<table className="table">
 				<thead key="thead">
 					<tr>
@@ -57,7 +80,6 @@ const Category = (props) => {
 										pathname: "/category/" + c.id,
 									}}
 								>
-									
 									<button className="btn btn-primary">
 										Перейти в категорию
 									</button>
@@ -88,17 +110,13 @@ const Category = (props) => {
 					</button>
 				</Link>
 			) : (
-				!id && (
-					<Link to={"/form"}>
-						<button className="btn btn-primary" onClick={nextPage}>
-							Добавить категорию
-						</button>
-					</Link>
-				)
+				<Link to={"/form"}>
+					<button className="btn btn-primary" onClick={nextPage}>
+						Добавить категорию
+					</button>
+				</Link>
 			)}
 		</div>
 	);
 };
-
-
 export default Category;
