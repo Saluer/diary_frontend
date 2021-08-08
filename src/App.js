@@ -8,7 +8,7 @@ import "./App.css";
 const BaseLayout = () => (
 	<div className="container-fluid">
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
-			<p className="navbar-brand">Django React Demo</p>
+			<p className="navbar-brand">Diary</p>
 			<button
 				className="navbar-toggler"
 				type="button"

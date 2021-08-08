@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import CategoryService from "./CategoryService";
-import { Switch, Route, Link, useParams, useRouteMatch } from "react-router-dom";
-import CategoryCreateUpdateForm from "./CategoryCreateUpdateForm";
+import {
+	Switch,
+	Route,
+	Link,
+	useParams,
+} from "react-router-dom";
+import CategoryForm from "./CategoryForm";
 
 const categoryService = new CategoryService();
 
@@ -10,11 +15,17 @@ const Category = () => {
 		<Switch>
 			<Route path="/" exact component={CategoryList} />
 			<Route path="/category/:id" exact component={CategoryList} />
-			<Route path="/form"  exact component={CategoryCreateUpdateForm} />
+			<Route path="/create" exact component={CategoryForm} />
 			<Route
-				path="/category/:id/form"
+				path="/category/:id/create"
 				exact
-				component={CategoryCreateUpdateForm}
+				component={CategoryForm}
+			/>
+			<Route path="/update" exact component={CategoryForm} />
+			<Route
+				path="/category/:id/update"
+				exact
+				component={CategoryForm}
 			/>
 		</Switch>
 	);
@@ -24,25 +35,24 @@ const CategoryList = (props) => {
 	const [categories, setCategories] = useState([]);
 	const [nextPageURL, setNextPageURL] = useState("");
 	const [upperCategoryName, setUpperCategoryName] = useState("");
-	//? Нужно ли?
-	const match = useRouteMatch();
-    console.log("🚀 ~ file: Category.js ~ line 28 ~ CategoryList ~ match", match)
+	const [description, setDescription] = useState("");
 	const { id } = useParams();
-	
+
 	useEffect(() => {
 		categoryService.getCategories(id).then(function (result) {
 			setCategories(result.data);
 			setNextPageURL(result.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
 			setUpperCategoryName(result.upper_category.name);
+			setDescription(result.upper_category.description);
 		});
-		return(()=>{
+		return () => {
 			setCategories([]);
 			setNextPageURL("");
 			setUpperCategoryName("");
-		})
-	}, [match, id]);
-	
+		};
+	}, [id]);
+
 	const handleDelete = (e, id) => {
 		categoryService.deleteCategory({ id: id }).then(() => {
 			var newArr = categories.filter(function (obj) {
@@ -62,11 +72,13 @@ const CategoryList = (props) => {
 	return (
 		<div className="categories--list">
 			<h2>{upperCategoryName}</h2>
+			<h4>{description}</h4>
 			<table className="table">
 				<thead key="thead">
 					<tr>
 						<th>ID</th>
 						<th>Name</th>
+						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -74,14 +86,24 @@ const CategoryList = (props) => {
 						<tr key={c.id}>
 							<td>{c.id} </td>
 							<td>{c.name}</td>
+							<td>{c.description}</td>
 							<td>
 								<Link
 									to={{
 										pathname: "/category/" + c.id,
 									}}
 								>
-									<button className="btn btn-primary">
+									<button className="btn btn-primary mr-2">
 										Перейти в категорию
+									</button>
+								</Link>
+								<Link
+									to={{
+										pathname: "/category/" + c.id + "/update",
+									}}
+								>
+									<button className="btn btn-info">
+										Редактировать категорию
 									</button>
 								</Link>
 							</td>
@@ -91,7 +113,6 @@ const CategoryList = (props) => {
 									//TODO Позже решу, какой путь будет у Update, чтобы не пересекалось с переходом в категорию
 									//? Может, через параметр указать способ? Как method=update?
 								}
-								{/* <a href={"/category/" + c.id}> Update</a> */}
 							</td>
 						</tr>
 					))}
@@ -104,13 +125,13 @@ const CategoryList = (props) => {
 				//TODO Подумать над улучшением кода
 			}
 			{id ? (
-				<Link to={id + "/form"}>
+				<Link to={id + "/create"}>
 					<button className="btn btn-primary" onClick={nextPage}>
 						Добавить категорию
 					</button>
 				</Link>
 			) : (
-				<Link to={"/form"}>
+				<Link to={"/create"}>
 					<button className="btn btn-primary" onClick={nextPage}>
 						Добавить категорию
 					</button>
