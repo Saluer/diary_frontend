@@ -1,10 +1,17 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
+import FlowService from "./FlowService";
 
-const FlowsTable = ()=>{
-    
-    
+const flowService = new FlowService();
 
-    return <p>Потоки</p>;
-}
+const FlowsTable = () => {
+	useEffect(() => {
+		flowService.geFlows().then(()=>{});
+	}, []);
 
+	return <p>Потоки</p>;
+};
+
+const Flow = () => {
+	return <p>Поток</p>;
+};
 export default FlowsTable;
