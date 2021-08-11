@@ -11,19 +11,21 @@ export default class CategoryService {
 		return axios.get(url).then((response) => response.data);
 	}
 	getCategory(pk) {
+        console.log("🚀 ~ file: CategoryService.js ~ line 14 ~ CategoryService ~ getCategory ~ pk", pk)
 		const url = `${API_URL}/api/category/${pk}`;
 		return axios.get(url).then((response) => response.data);
 	}
 	deleteCategory(category) {
-		const url = `${API_URL}/api/categories/${category.id}`;
+		const url = `${API_URL}/api/category/${category.id}`;
 		return axios.delete(url);
 	}
 	createCategory(category, upperCategoryID = "") {
-		const url = `${API_URL}/api/categories/${upperCategoryID}`;
+		console.log(upperCategoryID)
+		const url = `${API_URL}/api/category/${upperCategoryID}`;
 		return axios.post(url, category);
 	}
 	updateCategory(category) {
-		const url = `${API_URL}/api/categories/${category.category_id}`;
+		const url = `${API_URL}/api/category/${category.category_id}`;
 		return axios.put(url, category);
 	}
 }

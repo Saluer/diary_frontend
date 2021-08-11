@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, Switch } from "react-router-dom";
+import {Route, Switch } from "react-router-dom";
 import CategoryService from "./CategoryService";
 
 const categoryService = new CategoryService();
@@ -55,8 +55,11 @@ const CategoryCreateForm = (props) => {
 				},
 				params.id
 			)
-			.then((result) => {
-				alert(result);
+			.then(() => {
+				alert("Создано");
+				params.id
+					? props.history.push("/category/" + params.id)
+					: props.history.push("/");
 			})
 			.catch(() => {
 				alert("There was an error! Please re-check your form.");
@@ -116,11 +119,11 @@ const CategoryUpdateForm = (props) => {
 
 	useEffect(() => {
 		if (params && params.id) {
+			console.log(params.id)
 			categoryService.getCategory(params.id).then((c) => {
 				console.log(c);
-				const {data} = c;
-				if(c.upper_category_name)
-					setUpperCategoryName(c.upper_category_name);
+				const { data } = c;
+				if (c.upper_category_name) setUpperCategoryName(c.upper_category_name);
 				setName(data.name);
 				setDescription(data.description);
 			});
@@ -139,8 +142,11 @@ const CategoryUpdateForm = (props) => {
 				category_name: name,
 				category_description: description,
 			})
-			.then((result) => {
+			.then(() => {
 				alert("Category updated!");
+				params.id
+				? props.history.push("/category/" + params.id)
+				: props.history.push("/");
 			})
 			.catch(() => {
 				alert("There was an error! Please re-check your form.");
@@ -148,7 +154,8 @@ const CategoryUpdateForm = (props) => {
 	};
 
 	const handleSubmit = (event) => {
-		handleUpdate();
+		console.log("🚀 ~ file: CategoryForm.js ~ line 158 ~ handleSubmit ~ props.id", props.id)
+		handleUpdate(params.id);
 
 		event.preventDefault();
 	};

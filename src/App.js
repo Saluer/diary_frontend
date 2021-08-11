@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Link} from "react-router-dom";
 import Category from "./Category";
+import FlowsTable from "./Flow";
 
 import "./App.css";
 
@@ -33,6 +34,7 @@ const BaseLayout = () => (
 		</nav>
 		<div className="content">
 			<Category/>
+			<FlowsTable/>
 		</div>
 	</div>
 );
