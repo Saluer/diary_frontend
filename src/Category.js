@@ -1,45 +1,42 @@
 import React, { useState, useEffect } from "react";
 import CategoryService from "./CategoryService";
-import {
-	Switch,
-	Route,
-	Link,
-	useParams,
-} from "react-router-dom";
+import { Switch, Route, Link, useParams } from "react-router-dom";
 import CategoryForm from "./CategoryForm";
+import FlowsTable from "./Flow";
 
 const categoryService = new CategoryService();
 
-const Category = () => {
+const CategoryDispatcher = () => {
 	return (
 		<Switch>
-			<Route path="/" exact component={CategoryList} />
-			<Route path="/category/:id" exact component={CategoryList} />
-			<Route path="/create" exact component={CategoryForm} />
-			<Route
-				path="/category/:id/create"
-				exact
-				component={CategoryForm}
-			/>
-			<Route path="/update" exact component={CategoryForm} />
-			<Route
-				path="/category/:id/update"
-				exact
-				component={CategoryForm}
-			/>
+			<Route path="/(category)?/:id?/create" exact component={CategoryForm} />
+			<Route path="/(category)?/:id/update" exact component={CategoryForm} />
+			<Route path="/(category)?/:id?" exact component={CategoryInfo} />
 		</Switch>
 	);
 };
 
-const CategoryList = (props) => {
+const CategoryInfo = (props) => {
+	return (
+		<div>
+			<CategoryList props={props} />
+			<FlowsTable props={props} />
+		</div>
+	);
+};
+
+const CategoryList = () => {
 	const [categories, setCategories] = useState([]);
 	const [nextPageURL, setNextPageURL] = useState("");
 	const [upperCategoryName, setUpperCategoryName] = useState("");
 	const [description, setDescription] = useState("");
+
+	//? Может, стоит поменять на вариант без использования этой функции?
 	const { id } = useParams();
 
 	useEffect(() => {
 		categoryService.getCategories(id).then(function (result) {
+			console.log(id);
 			setCategories(result.data);
 			setNextPageURL(result.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
@@ -109,10 +106,6 @@ const CategoryList = (props) => {
 							</td>
 							<td>
 								<button onClick={(e) => handleDelete(e, c.id)}>Delete</button>
-								{
-									//TODO Позже решу, какой путь будет у Update, чтобы не пересекалось с переходом в категорию
-									//? Может, через параметр указать способ? Как method=update?
-								}
 							</td>
 						</tr>
 					))}
@@ -140,4 +133,4 @@ const CategoryList = (props) => {
 		</div>
 	);
 };
-export default Category;
+export default CategoryDispatcher;

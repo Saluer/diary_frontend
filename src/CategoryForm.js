@@ -31,6 +31,7 @@ const CategoryCreateForm = (props) => {
 	} = props;
 	useEffect(() => {
 		if (params && params.id) {
+			console.log(params)
 			categoryService.getCategories(params.id).then((c) => {
 				console.log(c);
 				setUpperCategoryName(c.upper_category.name);

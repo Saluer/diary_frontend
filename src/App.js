@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { BrowserRouter } from "react-router-dom";
-import { Link} from "react-router-dom";
-import Category from "./Category";
-import FlowsTable from "./Flow";
+import { BrowserRouter, Switch, Link, Route } from "react-router-dom";
+import CategoryDispatcher from "./Category"
 
 import "./App.css";
 
@@ -26,18 +24,23 @@ const BaseLayout = () => (
 					<Link className="nav-item nav-link" to="/">
 						Categories
 					</Link>
-					{/* <Link className="nav-item nav-link" to="/category">
-						Create category
-					</Link> */}
 				</div>
 			</div>
 		</nav>
 		<div className="content">
-			<Category/>
-			<FlowsTable/>
+			<CategoryFlowDispatcher/>
 		</div>
 	</div>
 );
+
+const CategoryFlowDispatcher=()=>{
+	return (
+		<Switch>
+			<Route path="/(category)?" component={CategoryDispatcher}/>
+			{/* <Route path="/category/flow" component={FlowDispatcher}/> */}
+		</Switch>
+	)
+}
 
 class App extends Component {
 	render() {
