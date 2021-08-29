@@ -21,86 +21,102 @@ const FlowForm = () => {
 	);
 };
 
-const FlowCreateForm = (props) => {
-	const [categoryName, setCategoryName] = useState(
-		"Ошибка. У основной категории не может быть потоков!"
-	);
-	const [name, setName] = useState("");
-	const [description, setDescription] = useState("");
-	const {
-		match: { params },
-	} = props;
-	useEffect(() => {
+class FlowCreateForm extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			categoryName: "Ошибка. У основной категории не может быть потоков!",
+			name: "",
+			description: "",
+		};
+	}
+
+	componentDidMount() {
+		const {
+			match: { params },
+		} = this.props;
 		categoryService.getCategory({ id: params.id }).then((category) => {
 			//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
-			setCategoryName(category.data.name);
+			this.setState({ abc: category.data.name });
 		});
-		return () => {
-			setCategoryName("");
-			setName("");
-			setDescription("");
-		};
-	}, [params]);
+	}
 
-	const handleCreate = () => {
+	handleCreate = () => {
+		const {
+			match: { params },
+		} = this.props;
 		flowService
 			.createFlow(
 				{
 					category: params.id,
-					name: name,
-					body: description,
+					name: this.state.name,
+					body: this.state.description,
 				},
 				params.id
 			)
 			.then(() => {
 				alert("Создано");
-				props.history.push("/category/" + params.id);
+				this.props.history.push("/category/" + params.id);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");
 			});
 	};
 
-	const handleSubmit = (event) => {
-		handleCreate();
+	handleSubmit = (event) => {
+		this.handleCreate();
 		event.preventDefault();
 	};
 
 	//? Можно ли как-то оптимизировать следующие две функции? Может, сделать компонент классовым?
-	const handleNameChange = (event) => {
-		setName(event.target.value);
-	};
+	// handleNameChange = (event) => {
+	// 	this.setState({ name: event.target.value });
+	// };
 
-	const handleDescriptionChange = (event) => {
-		setDescription(event.target.value);
-	};
+	// handleDescriptionChange = (event) => {
+	// 	this.setState({ description: event.target.value });
+	// };
 
-	return (
-		<form onSubmit={handleSubmit}>
-			<div className="form-group">
-				<h2>Создание нового потока</h2>
-				<label className="form-label mt-2">Категория:</label>
-				<span className="mx-2 font-italic text-info">{categoryName}</span>
-				<br />
-				<label className="mt-2">Название:</label>
-				<input
-					className="form-control w-25 mb-2"
-					type="text"
-					value={name || ""}
-					onChange={handleNameChange}
-				/>
-				<label>Описание:</label>
-				<input
-					className="form-control w-50"
-					type="text"
-					value={description || ""}
-					onChange={handleDescriptionChange}
-				/>
-				<input className="btn btn-primary mt-2" type="submit" value="Submit" />
-			</div>
-		</form>
-	);
-};
+	handleChange=(event)=>{
+		this.setState({[event.target.name]:event.target.value})
+	}
+
+	render() {
+		return (
+			<form onSubmit={this.handleSubmit}>
+				<div className="form-group">
+					<h2>Создание нового потока</h2>
+					<label className="form-label mt-2">Категория:</label>
+					<span className="mx-2 font-italic text-info">
+						{this.state.categoryName}
+					</span>
+					<br />
+					<label className="mt-2">Название:</label>
+					<input
+						name="name"
+						className="form-control w-25 mb-2"
+						type="text"
+						value={this.state.name || ""}
+						onChange={this.handleChange}
+					/>
+					<label>Описание:</label>
+					<input
+						name="description"
+						className="form-control w-50"
+						type="text"
+						value={this.state.description || ""}
+						onChange={this.handleChange}
+					/>
+					<input
+						className="btn btn-primary mt-2"
+						type="submit"
+						value="Submit"
+					/>
+				</div>
+			</form>
+		);
+	}
+}
 
 const FlowUpdateForm = (props) => {
 	const [name, setName] = useState("");

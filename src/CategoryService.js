@@ -22,7 +22,7 @@ export default class CategoryService {
 		return axios.delete(url);
 	}
 	createCategory(category) {
-		const url = `${API_URL}/api/category/${category.upperCategoryID}`;
+		const url = `${API_URL}/api/category/${category.upperCategoryId}`;
 		return axios.post(url, category);
 	}
 	updateCategory(category) {
