@@ -1,37 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import FlowService from "./FlowService";
 const flowService = new FlowService();
 
-const FlowsTable = ({ props }) => {
-	const {
-		match: { params },
-	} = props;
-
+const FlowsTable = () => {
 	const [flows, setFlows] = useState([]);
-
+	const {id} = useParams();
 	useEffect(() => {
-		if (params && params.id)
-			flowService.getFlows(params.id).then(({ data }) => {
-				setFlows(data);
+		if (id)
+			flowService.getFlows(id).then((flows) => {
+				setFlows(flows.data);
 			});
 		return () => {
 			setFlows([]);
 		};
-	}, [params]);
-	
-const handleDelete=(event, id)=>{
-	flowService.deleteFlow({ id: id }).then(() => {
-		const newArr = flows.filter(function (obj) {
-			return obj.id !== id;
-		});
-		setFlows(newArr);
-	});
-}
+	}, [id]);
 
-	if (flows.length)
-		return (
-			<div>
+	const handleDelete = (id) => {
+		flowService.deleteFlow({ id: id }).then(() => {
+			const newFlowsCollection = flows.filter((obj) => obj.id !== id);
+			setFlows(newFlowsCollection);
+		});
+	};
+
+	return (
+		<div>
+			{flows.length ? (
 				<table className="table table-hover mt-5">
 					<thead>
 						<tr>
@@ -51,12 +45,15 @@ const handleDelete=(event, id)=>{
 						))}
 					</tbody>
 				</table>
-                <Link to={"/flow/" + params.id + "/create"}>
-                    <button className="btn btn-primary">Создать поток</button>
-                </Link>
-			</div>
-		);
-	else return <p>Список потоков пуст!</p>;
+			) : (
+				<p>Список потоков пуст!</p>
+			)}
+			{id && 
+			<Link to={"/flow/" + id + "/create"}>
+				<button className="btn btn-primary my-3">Создать поток</button>
+			</Link>}
+		</div>
+	);
 };
 
 const Flow = (props) => {
@@ -73,7 +70,12 @@ const Flow = (props) => {
 						Редактировать поток
 					</button>
 				</Link>
-				<button className="btn btn-danger mr-3" onClick={(event)=>props.handleDelete(event, props.id)}>Удалить поток</button>
+				<button
+					className="btn btn-danger mr-3"
+					onClick={() => props.handleDelete(props.id)}
+				>
+					Удалить поток
+				</button>
 			</td>
 		</tr>
 	);

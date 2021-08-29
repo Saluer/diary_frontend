@@ -47,11 +47,11 @@ const CategoryCreateForm = (props) => {
 		console.log(params.id, name);
 		categoryService
 			.createCategory(
-				{
+				{	
+					upperCategoryId:params.id,
 					category_name: name,
 					category_description: description,
 				},
-				params.id
 			)
 			.then(() => {
 				alert("Создано");
@@ -117,7 +117,7 @@ const CategoryUpdateForm = (props) => {
 
 	useEffect(() => {
 		if (params && params.id) {
-			categoryService.getCategory(params.id).then((category) => {
+			categoryService.getCategory({id:params.id}).then((category) => {
 				if (category.upper_category_name)
 					setUpperCategoryName(category.upper_category_name);
 				const categoryData = category.data;
@@ -135,7 +135,7 @@ const CategoryUpdateForm = (props) => {
 	const handleUpdate = (id) => {
 		categoryService
 			.updateCategory({
-				category_id: id,
+				id: id,
 				category_name: name,
 				category_description: description,
 			})
@@ -152,7 +152,6 @@ const CategoryUpdateForm = (props) => {
 
 	const handleSubmit = (event) => {
 		handleUpdate(params.id);
-
 		event.preventDefault();
 	};
 

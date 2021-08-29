@@ -31,12 +31,9 @@ const FlowCreateForm = (props) => {
 		match: { params },
 	} = props;
 	useEffect(() => {
-		categoryService.getCategory(params.id).then((category) => {
+		categoryService.getCategory({ id: params.id }).then((category) => {
 			//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
 			setCategoryName(category.data.name);
-			// const flowData = flow.data;
-			// setName(flowData.data.name);
-			// setDescription(flowData.description);
 		});
 		return () => {
 			setCategoryName("");
@@ -49,7 +46,7 @@ const FlowCreateForm = (props) => {
 		flowService
 			.createFlow(
 				{
-					category:params.id,
+					category: params.id,
 					name: name,
 					body: description,
 				},
@@ -116,15 +113,13 @@ const FlowUpdateForm = (props) => {
 	} = props;
 
 	useEffect(() => {
-		if (params && params.id) {
-			flowService.getFlow(params.id).then((flow) => {
-				console.log(flow);
-				if (flow.category_name) setCategoryName(flow.category_name);
-				const flowData = flow.data;
-				setName(flowData.name);
-				setDescription(flowData.description);
-			});
-		} else params.id = "";
+		flowService.getFlow({ id: params.id }).then((flow) => {
+			if (flow.category_name) setCategoryName(flow.category_name);
+			const flowData = flow.data;
+			setName(flowData.name);
+			setDescription(flowData.body);
+		});
+
 		return () => {
 			setName("");
 			setDescription("");
@@ -134,15 +129,10 @@ const FlowUpdateForm = (props) => {
 
 	const handleUpdate = (id) => {
 		flowService
-			.updateFlow({
-				name: name,
-				body: description,
-			}, id)
+			.updateFlow({ id: id, name: name, body: description })
 			.then(() => {
 				alert("Flow updated!");
-				params.id
-					? props.history.push("/flow/" + params.id)
-					: props.history.push("/");
+				props.history.push("/flow/" + params.id);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");
@@ -151,7 +141,6 @@ const FlowUpdateForm = (props) => {
 
 	const handleSubmit = (event) => {
 		handleUpdate(params.id);
-
 		event.preventDefault();
 	};
 

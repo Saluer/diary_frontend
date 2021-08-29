@@ -16,11 +16,11 @@ const CategoryDispatcher = () => {
 	);
 };
 
-const CategoryInfo = (props) => {
+const CategoryInfo = () => {
 	return (
 		<div>
-			<CategoryList props={props} />
-			<FlowsTable props={props} />
+			<CategoryList/>
+			<FlowsTable />
 		</div>
 	);
 };
@@ -31,16 +31,18 @@ const CategoryList = () => {
 	const [upperCategoryName, setUpperCategoryName] = useState("");
 	const [description, setDescription] = useState("");
 
-	//? Может, стоит поменять на вариант без использования этой функции?
+	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно. 
+	//Вдобавок, не приходится писать длинный код деконструкции
+	//Считай, функция берёт данные из роутера, не из параметров
 	const { id } = useParams();
 
 	useEffect(() => {
-		categoryService.getCategories(id).then(function (result) {
-			setCategories(result.data);
-			setNextPageURL(result.nextLink);
+		categoryService.getCategories(id).then((categories) => {
+			setCategories(categories.data);
+			setNextPageURL(categories.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
-			setUpperCategoryName(result.upper_category.name);
-			setDescription(result.upper_category.description);
+			setUpperCategoryName(categories.upper_category.name);
+			setDescription(categories.upper_category.description);
 		});
 		return () => {
 			setCategories([]);
@@ -49,19 +51,17 @@ const CategoryList = () => {
 		};
 	}, [id]);
 
-	const handleDelete = (e, id) => {
+	const handleDelete = (id) => {
 		categoryService.deleteCategory({ id: id }).then(() => {
-			var newArr = categories.filter(function (obj) {
-				return obj.id !== id;
-			});
-			setCategories(newArr);
+			const newCategoriesCollection = categories.filter((obj) => obj.id !== id);
+			setCategories(newCategoriesCollection);
 		});
 	};
 
 	const nextPage = () => {
-		categoryService.getCategoriesByURL(nextPageURL).then((result) => {
-			setCategories(result.data);
-			setNextPageURL(result.nextLink);
+		categoryService.getCategoriesByURL(nextPageURL).then((categories) => {
+			setCategories(categories.data);
+			setNextPageURL(categories.nextLink);
 		});
 	};
 
@@ -70,7 +70,7 @@ const CategoryList = () => {
 			<h2>{upperCategoryName}</h2>
 			<h4>{description}</h4>
 			<table className="table">
-				<thead key="thead">
+				<thead>
 					<tr>
 						<th>ID</th>
 						<th>Name</th>
@@ -78,15 +78,15 @@ const CategoryList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{categories.map((c) => (
-						<tr key={c.id}>
-							<td>{c.id} </td>
-							<td>{c.name}</td>
-							<td>{c.description}</td>
+					{categories.map((category) => (
+						<tr key={category.id}>
+							<td>{category.id} </td>
+							<td>{category.name}</td>
+							<td>{category.description}</td>
 							<td>
 								<Link
 									to={{
-										pathname: "/category/" + c.id,
+										pathname: "/category/" + category.id,
 									}}
 								>
 									<button className="btn btn-primary mr-2">
@@ -95,7 +95,7 @@ const CategoryList = () => {
 								</Link>
 								<Link
 									to={{
-										pathname: "/category/" + c.id + "/update",
+										pathname: "/category/" + category.id + "/update",
 									}}
 								>
 									<button className="btn btn-info">
@@ -104,7 +104,7 @@ const CategoryList = () => {
 								</Link>
 							</td>
 							<td>
-								<button onClick={(e) => handleDelete(e, c.id)}>Delete</button>
+								<button onClick={() => handleDelete(category.id)}>Delete</button>
 							</td>
 						</tr>
 					))}
@@ -113,22 +113,11 @@ const CategoryList = () => {
 			<button className="btn btn-secondary mr-3" onClick={nextPage}>
 				Next
 			</button>
-			{
-				//TODO Подумать над улучшением кода
-			}
-			{id ? (
-				<Link to={id + "/create"}>
-					<button className="btn btn-primary" onClick={nextPage}>
-						Добавить категорию
-					</button>
-				</Link>
-			) : (
-				<Link to={"/create"}>
-					<button className="btn btn-primary" onClick={nextPage}>
-						Добавить категорию
-					</button>
-				</Link>
-			)}
+			<Link to={(id ? id : "") + "/create"}>
+				<button className="btn btn-primary">
+					Добавить категорию
+				</button>
+			</Link>
 		</div>
 	);
 };
