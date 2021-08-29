@@ -2,18 +2,20 @@ import axios from "axios";
 const API_URL = "http://localhost:8000";
 
 export default class CategoryService {
-	getCategories(upperCategoryID = "") {
+	async getCategories(upperCategoryID = "") {
 		const url = `${API_URL}/api/categories/${upperCategoryID}`;
-		return axios.get(url).then((response) => response.data);
+		const response = await axios.get(url);
+		return response.data;
 	}
-	getCategoriesByURL(link) {
+	async getCategoriesByURL(link) {
 		const url = `${API_URL}${link}`;
-		return axios.get(url).then((response) => response.data);
+		const response = await axios.get(url);
+		return response.data;
 	}
-	getCategory(pk) {
-        console.log("🚀 ~ file: CategoryService.js ~ line 14 ~ CategoryService ~ getCategory ~ pk", pk)
+	async getCategory(pk) {
 		const url = `${API_URL}/api/category/${pk}`;
-		return axios.get(url).then((response) => response.data);
+		const response = await axios.get(url);
+		return response.data;
 	}
 	deleteCategory(category) {
 		const url = `${API_URL}/api/category/${category.id}`;

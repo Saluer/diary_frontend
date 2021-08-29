@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter, Switch, Link, Route } from "react-router-dom";
-import CategoryDispatcher from "./Category"
-
+import CategoryDispatcher from "./Category";
+import FlowDispatcher from "./Flow";
 import "./App.css";
 
 const BaseLayout = () => (
@@ -22,25 +22,25 @@ const BaseLayout = () => (
 			<div className="collapse navbar-collapse" id="navbarNavAltMarkup">
 				<div className="navbar-nav">
 					<Link className="nav-item nav-link" to="/">
-						Categories
+						Главная
 					</Link>
 				</div>
 			</div>
 		</nav>
 		<div className="content">
-			<CategoryFlowDispatcher/>
+			<CategoryFlowDispatcher />
 		</div>
 	</div>
 );
 
-const CategoryFlowDispatcher=()=>{
+const CategoryFlowDispatcher = () => {
 	return (
 		<Switch>
-			<Route path="/(category)?" component={CategoryDispatcher}/>
-			{/* <Route path="/category/flow" component={FlowDispatcher}/> */}
+			<Route path="/flow" component={FlowDispatcher} />
+			<Route path="/(category)?" component={CategoryDispatcher} />
 		</Switch>
-	)
-}
+	);
+};
 
 class App extends Component {
 	render() {

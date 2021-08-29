@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
+import FlowService from "./FlowService";
 import CategoryService from "./CategoryService";
 
 const categoryService = new CategoryService();
+const flowService = new FlowService();
 
 /*! Форма работает корректно для создания и некорректно - для обновления категорий.
 Дело в том, что при создании передаётся id надкатегории, а при обновлении - id дочерней категории.
@@ -10,63 +12,60 @@ const categoryService = new CategoryService();
 Однако пока принципиально*/
 
 //? Можно ли задействовать наследование?
-const CategoryForm = () => {
+const FlowForm = () => {
 	return (
 		<Switch>
-			<Route path="/create" component={CategoryCreateForm} />
-			<Route path="/category/:id/create" component={CategoryCreateForm} />
-			<Route path="/category/:id/update" component={CategoryUpdateForm} />
+			<Route path="/flow/:id/create" component={FlowCreateForm} />
+			<Route path="/flow/:id/update" component={FlowUpdateForm} />
 		</Switch>
 	);
 };
 
-const CategoryCreateForm = (props) => {
+const FlowCreateForm = (props) => {
+	const [categoryName, setCategoryName] = useState(
+		"Ошибка. У основной категории не может быть потоков!"
+	);
 	const [name, setName] = useState("");
-	const [upperCategoryName, setUpperCategoryName] =
-		useState("Основная категория");
 	const [description, setDescription] = useState("");
 	const {
 		match: { params },
 	} = props;
 	useEffect(() => {
-		if (params && params.id) {
-			categoryService.getCategories(params.id).then((category) => {
-				setUpperCategoryName(category.upper_category.name);
-				setName(category.name);
-				setDescription(category.description);
-			});
-		} else params.id = "";
+		categoryService.getCategory(params.id).then((category) => {
+			//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
+			setCategoryName(category.data.name);
+			// const flowData = flow.data;
+			// setName(flowData.data.name);
+			// setDescription(flowData.description);
+		});
 		return () => {
+			setCategoryName("");
 			setName("");
 			setDescription("");
-			setUpperCategoryName("");
 		};
 	}, [params]);
 
 	const handleCreate = () => {
-		console.log(params.id, name);
-		categoryService
-			.createCategory(
+		flowService
+			.createFlow(
 				{
-					category_name: name,
-					category_description: description,
+					category:params.id,
+					name: name,
+					body: description,
 				},
 				params.id
 			)
 			.then(() => {
 				alert("Создано");
-				params.id
-					? props.history.push("/category/" + params.id)
-					: props.history.push("/");
+				props.history.push("/category/" + params.id);
 			})
 			.catch(() => {
-				alert("There was an error! Please re-check your form.");
+				alert("Вы допустили ошибку при заполнении формы!");
 			});
 	};
 
 	const handleSubmit = (event) => {
 		handleCreate();
-
 		event.preventDefault();
 	};
 
@@ -82,9 +81,9 @@ const CategoryCreateForm = (props) => {
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className="form-group">
-				<h2>Создание новой категории</h2>
-				<label className="form-label mt-2">Надкатегория:</label>
-				<span className="mx-2 font-italic text-info">{upperCategoryName}</span>
+				<h2>Создание нового потока</h2>
+				<label className="form-label mt-2">Категория:</label>
+				<span className="mx-2 font-italic text-info">{categoryName}</span>
 				<br />
 				<label className="mt-2">Название:</label>
 				<input
@@ -106,10 +105,11 @@ const CategoryCreateForm = (props) => {
 	);
 };
 
-const CategoryUpdateForm = (props) => {
+const FlowUpdateForm = (props) => {
 	const [name, setName] = useState("");
-	const [upperCategoryName, setUpperCategoryName] =
-		useState("Основная категория");
+	const [categoryName, setCategoryName] = useState(
+		"Ошибка. У основной категории не может быть потоков!"
+	);
 	const [description, setDescription] = useState("");
 	const {
 		match: { params },
@@ -117,32 +117,31 @@ const CategoryUpdateForm = (props) => {
 
 	useEffect(() => {
 		if (params && params.id) {
-			categoryService.getCategory(params.id).then((category) => {
-				if (category.upper_category_name)
-					setUpperCategoryName(category.upper_category_name);
-				const categoryData = category.data;
-				setName(categoryData.name);
-				setDescription(categoryData.description);
+			flowService.getFlow(params.id).then((flow) => {
+				console.log(flow);
+				if (flow.category_name) setCategoryName(flow.category_name);
+				const flowData = flow.data;
+				setName(flowData.name);
+				setDescription(flowData.description);
 			});
 		} else params.id = "";
 		return () => {
 			setName("");
 			setDescription("");
-			setUpperCategoryName("");
+			setCategoryName("");
 		};
 	}, [params]);
 
 	const handleUpdate = (id) => {
-		categoryService
-			.updateCategory({
-				category_id: id,
-				category_name: name,
-				category_description: description,
-			})
+		flowService
+			.updateFlow({
+				name: name,
+				body: description,
+			}, id)
 			.then(() => {
-				alert("Category updated!");
+				alert("Flow updated!");
 				params.id
-					? props.history.push("/category/" + params.id)
+					? props.history.push("/flow/" + params.id)
 					: props.history.push("/");
 			})
 			.catch(() => {
@@ -168,9 +167,9 @@ const CategoryUpdateForm = (props) => {
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className="form-group">
-				<h2>Редактирование категории</h2>
-				<label className="form-label mt-2">Надкатегория:</label>
-				<span className="mx-2 font-italic text-info">{upperCategoryName}</span>
+				<h2>Редактирование потока</h2>
+				<label className="form-label mt-2">Категория:</label>
+				<span className="mx-2 font-italic text-info">{categoryName}</span>
 				<br />
 				<label className="mt-2">Название:</label>
 				<input
@@ -191,4 +190,4 @@ const CategoryUpdateForm = (props) => {
 		</form>
 	);
 };
-export default CategoryForm;
+export default FlowForm;

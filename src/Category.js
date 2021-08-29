@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CategoryService from "./CategoryService";
 import { Switch, Route, Link, useParams } from "react-router-dom";
 import CategoryForm from "./CategoryForm";
-import FlowsTable from "./Flow";
+import FlowsTable from "./FlowsTable";
 
 const categoryService = new CategoryService();
 
@@ -36,7 +36,6 @@ const CategoryList = () => {
 
 	useEffect(() => {
 		categoryService.getCategories(id).then(function (result) {
-			console.log(id);
 			setCategories(result.data);
 			setNextPageURL(result.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
