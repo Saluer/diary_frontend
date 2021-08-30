@@ -5,7 +5,7 @@ const flowService = new FlowService();
 
 const FlowsTable = () => {
 	const [flows, setFlows] = useState([]);
-	const {id} = useParams();
+	const { id } = useParams();
 	useEffect(() => {
 		if (id)
 			flowService.getFlows(id).then((flows) => {
@@ -46,12 +46,13 @@ const FlowsTable = () => {
 					</tbody>
 				</table>
 			) : (
-				<p>Список потоков пуст!</p>
+				id && <p>Список потоков пуст!</p>
 			)}
-			{id && 
-			<Link to={"/flow/" + id + "/create"}>
-				<button className="btn btn-primary my-3">Создать поток</button>
-			</Link>}
+			{id && (
+				<Link to={"/flow/" + id + "/create"}>
+					<button className="btn btn-primary my-3">Создать поток</button>
+				</Link>
+			)}
 		</div>
 	);
 };
