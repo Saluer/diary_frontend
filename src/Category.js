@@ -9,8 +9,12 @@ const categoryService = new CategoryService();
 const CategoryDispatcher = () => {
 	return (
 		<Switch>
-			<Route path="/(category)?/:id?/create" exact component={CategoryForm} />
-			<Route path="/(category)?/:id/update" exact component={CategoryForm} />
+			<Route path="/:action" exact component={CategoryForm} />
+			<Route
+				path="/category/:id/:action"
+				exact
+				component={CategoryForm}
+			/>
 			<Route path="/(category)?/:id?" exact component={CategoryInfo} />
 		</Switch>
 	);
@@ -19,7 +23,7 @@ const CategoryDispatcher = () => {
 const CategoryInfo = () => {
 	return (
 		<div>
-			<CategoryList/>
+			<CategoryList />
 			<FlowsTable />
 		</div>
 	);
@@ -31,7 +35,7 @@ const CategoryList = () => {
 	const [upperCategoryName, setUpperCategoryName] = useState("");
 	const [description, setDescription] = useState("");
 
-	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно. 
+	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
 	const { id } = useParams();
@@ -104,7 +108,9 @@ const CategoryList = () => {
 								</Link>
 							</td>
 							<td>
-								<button onClick={() => handleDelete(category.id)}>Delete</button>
+								<button onClick={() => handleDelete(category.id)}>
+									Delete
+								</button>
 							</td>
 						</tr>
 					))}
@@ -114,9 +120,7 @@ const CategoryList = () => {
 				Next
 			</button>
 			<Link to={(id ? id : "") + "/create"}>
-				<button className="btn btn-primary">
-					Добавить категорию
-				</button>
+				<button className="btn btn-primary">Добавить категорию</button>
 			</Link>
 		</div>
 	);
