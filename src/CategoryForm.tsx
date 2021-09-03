@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Route, Switch } from "react-router-dom";
+import React from "react";
 import CategoryService from "./CategoryService";
 
 const categoryService = new CategoryService();
 
-class CategoryForm extends React.Component {
+class CategoryForm extends React.Component<JSX.Element> {
 	constructor(props) {
 		super(props);
 		this.state = {

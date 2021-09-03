@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import CategoryService from "./CategoryService";
 import { Switch, Route, Link, useParams } from "react-router-dom";
 import CategoryForm from "./CategoryForm";
@@ -6,6 +6,12 @@ import FlowsTable from "./FlowsTable";
 
 const categoryService = new CategoryService();
 
+interface Category {
+	id: string;
+	upperCategoryId:string;
+	name:string;
+	description:string;
+}
 const CategoryDispatcher = () => {
 	return (
 		<Switch>
@@ -30,7 +36,7 @@ const CategoryInfo = () => {
 };
 
 const CategoryList = () => {
-	const [categories, setCategories] = useState([]);
+	const [categories, setCategories] = useState<Category[]>([]);
 	const [nextPageURL, setNextPageURL] = useState("");
 	const [upperCategoryName, setUpperCategoryName] = useState("");
 	const [description, setDescription] = useState("");
@@ -38,7 +44,7 @@ const CategoryList = () => {
 	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
-	const { id } = useParams();
+	const { id }= useParams<{id:string}>();
 
 	useEffect(() => {
 		categoryService.getCategories(id).then((categories) => {
@@ -55,7 +61,7 @@ const CategoryList = () => {
 		};
 	}, [id]);
 
-	const handleDelete = (id) => {
+	const handleDelete = (id:string) => {
 		categoryService.deleteCategory({ id: id }).then(() => {
 			const newCategoriesCollection = categories.filter((obj) => obj.id !== id);
 			setCategories(newCategoriesCollection);
