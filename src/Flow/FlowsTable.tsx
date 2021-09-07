@@ -4,11 +4,11 @@ import FlowService from "./FlowService";
 const flowService = new FlowService();
 
 const FlowsTable = () => {
-	const [flows, setFlows] = useState([]);
-	const { id } = useParams();
+	const [flows, setFlows] = useState<any[]>([]);
+	const { id } = useParams<{ id: string }>();
 	useEffect(() => {
 		if (id)
-			flowService.getFlows(id).then((flows) => {
+			flowService.getFlows({ id }).then((flows) => {
 				setFlows(flows.data);
 			});
 		return () => {
@@ -16,9 +16,9 @@ const FlowsTable = () => {
 		};
 	}, [id]);
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: string) => {
 		flowService.deleteFlow({ id: id }).then(() => {
-			const newFlowsCollection = flows.filter((obj) => obj.id !== id);
+			const newFlowsCollection = flows.filter((obj: any) => obj.id !== id);
 			setFlows(newFlowsCollection);
 		});
 	};
@@ -39,7 +39,8 @@ const FlowsTable = () => {
 								key={flow.id}
 								id={flow.id}
 								name={flow.name}
-								body={flow.body}
+								description={flow.description}
+								categoryName={flow.categoryName}
 								handleDelete={handleDelete}
 							/>
 						))}
@@ -57,11 +58,11 @@ const FlowsTable = () => {
 	);
 };
 
-const Flow = (props) => {
+const Flow = (props: any & ({handleDelete:(id:string)=>void})) => {
 	return (
 		<tr>
 			<td>{props.name}</td>
-			<td>{props.body}</td>
+			<td>{props.description}</td>
 			<td>
 				<Link to={"/flow/" + props.id}>
 					<button className="btn btn-primary mr-3">Открыть поток</button>
@@ -73,7 +74,7 @@ const Flow = (props) => {
 				</Link>
 				<button
 					className="btn btn-danger mr-3"
-					onClick={() => props.handleDelete(props.id)}
+					onClick={() => props.handleDelete(props.id!)}
 				>
 					Удалить поток
 				</button>

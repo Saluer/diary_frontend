@@ -1,60 +1,58 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import CategoryService from "./CategoryService";
-
+import { RouteComponentProps } from "react-router";
+import { IParams, ICategoryFormState } from "../types";
 const categoryService = new CategoryService();
 
-class CategoryForm extends React.Component<JSX.Element> {
-	constructor(props) {
+class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICategoryFormState> {
+	params:IParams;
+	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
 			upperCategoryName: "Основная категория",
 			name: "",
 			description: "",
 		};
+		this.params = this.props.match.params;
 	}
 
 	componentDidMount() {
-		const {
-			match: { params },
-		} = this.props;
-		if (params.action === "create")
-			if (params && params.id)
-				categoryService.getCategories(params.id).then((category) => {
+		if (this.params.action === "create")
+			if (this.params && this.params.id) {
+				categoryService.getCategories(this.params.id).then((category) => {
 					this.setState({
 						upperCategoryName: category.upper_category.name,
 						name: category.name,
 						description: category.description,
 					});
 				});
-			else params.id = "";
-		else if (params.action === "update")
-			if (params && params.id) {
-				categoryService.getCategory({ id: params.id }).then((category) => {
+			}
+			else this.params.id = "";
+		else if (this.params.action === "update")
+			if (this.params && this.params.id) {
+				categoryService.getCategory({ id: this.params.id }).then((category) => {
 					if (category.upper_category_name)
-						this.setState({ categoryUpperName: category.upper_category_name });
+						this.setState({ upperCategoryName: category.upper_category_name });
 					const categoryData = category.data;
 					this.setState({
 						name: categoryData.name,
 						description: categoryData.description,
 					});
 				});
-			} else params.id = "";
+			} else this.params.id = "";
 	}
 
-	handleCreate = (event) => {
-		const {
-			match: { params },
-		} = this.props;
+	handleCreate = (event: FormEvent) => {
 		categoryService
 			.createCategory({
-				upperCategoryId: params.id,
-				category_name: this.state.name,
-				category_description: this.state.description,
+				upperCategoryId: this.params.id,
+				name: this.state.name,
+				description: this.state.description,
 			})
 			.then(() => {
 				alert("Создано");
-				params.id
-					? this.props.history.push("/category/" + params.id)
+				this.params.id
+					? this.props.history.push("/category/" + this.params.id)
 					: this.props.history.push("/");
 			})
 			.catch(() => {
@@ -63,20 +61,17 @@ class CategoryForm extends React.Component<JSX.Element> {
 		event.preventDefault();
 	};
 
-	handleUpdate = (event) => {
-		const {
-			match: { params },
-		} = this.props;
+	handleUpdate = (event: FormEvent) => {
 		categoryService
 			.updateCategory({
-				id: params.id,
-				category_name: this.state.name,
-				category_description: this.state.description,
+				id: this.params.id,
+				name: this.state.name,
+				description: this.state.description,
 			})
 			.then(() => {
 				alert("Category updated!");
-				params.id
-					? this.props.history.push("/category/" + params.id)
+				this.params.id
+					? this.props.history.push("/category/" + this.params.id)
 					: this.props.history.push("/");
 			})
 			.catch(() => {
@@ -85,16 +80,13 @@ class CategoryForm extends React.Component<JSX.Element> {
 		event.preventDefault();
 	};
 
-	handleChange = (event) => {
-		this.setState({ [event.target.name]: event.target.value });
+	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		this.setState({ ...this.state, [event.target.name]: event.target.value });
 	};
 
 	render() {
-		const {
-			match: { params },
-		} = this.props;
-		console.log(params);
-		if (params.action === "create")
+		console.log(this.params);
+		if (this.params.action === "create")
 			return (
 				<form onSubmit={this.handleCreate}>
 					<div className="form-group">
@@ -128,7 +120,7 @@ class CategoryForm extends React.Component<JSX.Element> {
 					</div>
 				</form>
 			);
-		else if (params.action === "update")
+		else if (this.params.action === "update")
 			return (
 				<form onSubmit={this.handleUpdate}>
 					<div className="form-group">

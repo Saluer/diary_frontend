@@ -1,17 +1,12 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import CategoryService from "./CategoryService";
 import { Switch, Route, Link, useParams } from "react-router-dom";
 import CategoryForm from "./CategoryForm";
-import FlowsTable from "./FlowsTable";
-
+import FlowsTable from "../Flow/FlowsTable";
+// import { ICategoryAPI } from "../types";
 const categoryService = new CategoryService();
 
-interface Category {
-	id: string;
-	upperCategoryId:string;
-	name:string;
-	description:string;
-}
+
 const CategoryDispatcher = () => {
 	return (
 		<Switch>
@@ -36,7 +31,7 @@ const CategoryInfo = () => {
 };
 
 const CategoryList = () => {
-	const [categories, setCategories] = useState<Category[]>([]);
+	const [categories, setCategories] = useState<any>([]);
 	const [nextPageURL, setNextPageURL] = useState("");
 	const [upperCategoryName, setUpperCategoryName] = useState("");
 	const [description, setDescription] = useState("");
@@ -44,8 +39,7 @@ const CategoryList = () => {
 	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
-	const { id }= useParams<{id:string}>();
-
+	const { id } = useParams<{ id: string|undefined }>();
 	useEffect(() => {
 		categoryService.getCategories(id).then((categories) => {
 			setCategories(categories.data);
@@ -61,9 +55,9 @@ const CategoryList = () => {
 		};
 	}, [id]);
 
-	const handleDelete = (id:string) => {
+	const handleDelete = (id: string) => {
 		categoryService.deleteCategory({ id: id }).then(() => {
-			const newCategoriesCollection = categories.filter((obj) => obj.id !== id);
+			const newCategoriesCollection = categories.filter((obj:any) => obj.id !== id);
 			setCategories(newCategoriesCollection);
 		});
 	};
@@ -88,7 +82,7 @@ const CategoryList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{categories.map((category) => (
+					{categories.map((category:any) => (
 						<tr key={category.id}>
 							<td>{category.id} </td>
 							<td>{category.name}</td>
@@ -114,7 +108,7 @@ const CategoryList = () => {
 								</Link>
 							</td>
 							<td>
-								<button onClick={() => handleDelete(category.id)}>
+								<button onClick={() => handleDelete(category.id!)}>
 									Delete
 								</button>
 							</td>

@@ -1,55 +1,53 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import FlowService from "./FlowService";
-import CategoryService from "./CategoryService";
-
+import CategoryService from "../Category/CategoryService";
+import { IFlowFormState, IParams } from "../types";
+import { RouteComponentProps } from "react-router";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
 
-class FlowForm extends React.Component {
-	constructor(props) {
+class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormState>  {
+	params:IParams;
+	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
-			categoryName: "Ошибка. У основной категории не может быть потоков!",
+			categoryName: "Ошибка",
 			name: "",
 			description: "",
 		};
+		this.params = this.props.match.params;
 	}
+
 
 	componentDidMount() {
-		const {
-			match: { params },
-		} = this.props;
-		if (params.action === "create")
-			categoryService.getCategory({ id: params.id }).then((category) => {
+		if (this.params.action === "create")
+			categoryService.getCategory({ id: this.params.id }).then((category) => {
 				//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
-				this.setState({ categoryName: category.data.name });
+				this.setState({categoryName: category.data.name});
 			});
-		else if (params.action === "update")
-			flowService.getFlow({ id: params.id }).then((flow) => {
+		else if (this.params.action === "update")
+			flowService.getFlow({ id: this.params.id }).then((flow) => {
 				if (flow.category_name)
-					this.setState({ categoryName: flow.category_name });
+					this.setState({categoryName:  flow.category_name});
 				const flowData = flow.data;
-				this.setState({ name: flowData.name, description: flowData.body });
+				this.setState({ name: flowData.name, description: flowData.description });
 			});
 	}
 
-	handleCreate = (event) => {
-		const {
-			match: { params },
-		} = this.props;
+	handleCreate = (event: FormEvent) => {
 		flowService
 			.createFlow(
 				{
-					category: params.id,
+					category: this.params.id,
 					name: this.state.name,
-					body: this.state.description,
-				},
-				params.id
+					description: this.state.description,
+				}
 			)
 			.then(() => {
+				console.log(this.state.description);
 				alert("Создано");
-				this.props.history.push("/category/" + params.id);
+				this.props.history.push("/category/" + this.params.id);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");
@@ -57,19 +55,16 @@ class FlowForm extends React.Component {
 		event.preventDefault();
 	};
 
-	handleUpdate = (event) => {
-		const {
-			match: { params },
-		} = this.props;
+	handleUpdate = (event: FormEvent) => {
 		flowService
 			.updateFlow({
-				id: params.id,
+				id: this.params.id,
 				name: this.state.name,
-				body: this.state.description,
+				description: this.state.description,
 			})
 			.then(() => {
 				alert("Flow updated!");
-				this.props.history.push("/flow/" + params.id);
+				this.props.history.push("/flow/" + this.params.id);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");
@@ -77,16 +72,12 @@ class FlowForm extends React.Component {
 		event.preventDefault();
 	};
 
-	handleChange = (event) => {
-		this.setState({ [event.target.name]: event.target.value });
+	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		this.setState({ ...this.state, [event.target.name]: event.target.value });
 	};
 
 	render() {
-		const {
-			match: { params },
-		} = this.props;
-
-		if (params.action === "create")
+		if (this.params.action === "create")
 			return (
 				<form onSubmit={this.handleCreate}>
 					<div className="form-group">
@@ -120,7 +111,7 @@ class FlowForm extends React.Component {
 					</div>
 				</form>
 			);
-		else if (params.action === "update")
+		else if (this.params.action === "update")
 			return (
 				<form onSubmit={this.handleUpdate}>
 					<div className="form-group">

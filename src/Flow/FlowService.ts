@@ -1,26 +1,29 @@
 import axios from "axios";
 const API_URL = "http://localhost:8000";
 
-export default class FlowSerivce{
-    async getFlows(categoryId) {
-		const url = `${API_URL}/api/flows/${categoryId}`;
+export default class FlowSerivce {
+	//!
+	async getFlows(flow: { id: string }) {
+		const url = `${API_URL}/api/flows/${flow.id}`;
 		const response = await axios.get(url);
 		return response.data;
 	}
-	async getFlow(flow) {
+	async getFlow(flow: { id: string }) {
 		const url = `${API_URL}/api/flow/${flow.id}`;
 		const response = await axios.get(url);
 		return response.data;
 	}
-	deleteFlow(flow) {
+	deleteFlow(flow: { id: string }) {
 		const url = `${API_URL}/api/flow/${flow.id}`;
 		return axios.delete(url);
 	}
-	createFlow(flow, categoryId) {
-		const url = `${API_URL}/api/flow/${categoryId}`;
+	createFlow(
+		flow: { category: string; name: string; description: string }
+	) {
+		const url = `${API_URL}/api/flow/${flow.category}`;
 		return axios.post(url, flow);
 	}
-	updateFlow(flow) {
+	updateFlow(flow: { id: string; name: string; description: string }) {
 		const url = `${API_URL}/api/flow/${flow.id}`;
 		return axios.put(url, flow);
 	}

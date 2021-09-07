@@ -11,6 +11,6 @@ const FlowDispatcher = () => {
 };
 
 const FlowInfo = () => {
-	return "Информация о потоке";
+	return <p>Информация о потоке";</p>
 };
 export default FlowDispatcher;
