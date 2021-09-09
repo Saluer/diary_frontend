@@ -17,9 +17,7 @@ export default class FlowSerivce {
 		const url = `${API_URL}/api/flow/${flow.id}`;
 		return axios.delete(url);
 	}
-	createFlow(
-		flow: { category: string; name: string; description: string }
-	) {
+	createFlow(flow: { category: string; name: string; description: string }) {
 		const url = `${API_URL}/api/flow/${flow.category}`;
 		return axios.post(url, flow);
 	}

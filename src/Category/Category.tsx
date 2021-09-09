@@ -7,16 +7,17 @@ import FlowsTable from "../Flow/FlowsTable";
 const categoryService = new CategoryService();
 
 
-const CategoryDispatcher = () => {
+const CategoryDispatcher = (props:any) => {
+	console.log(props);
 	return (
 		<Switch>
 			<Route path="/:action" exact component={CategoryForm} />
 			<Route
-				path="/category/:id/:action"
+				path="/category/:categoryID/:action"
 				exact
 				component={CategoryForm}
 			/>
-			<Route path="/(category)?/:id?" exact component={CategoryInfo} />
+			<Route path="/(category)?/:categoryID?" exact component={CategoryInfo} />
 		</Switch>
 	);
 };
@@ -39,9 +40,9 @@ const CategoryList = () => {
 	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
-	const { id } = useParams<{ id: string|undefined }>();
+	const { categoryID } = useParams<{ categoryID: string|undefined }>();
 	useEffect(() => {
-		categoryService.getCategories(id).then((categories) => {
+		categoryService.getCategories(categoryID).then((categories) => {
 			setCategories(categories.data);
 			setNextPageURL(categories.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
@@ -53,10 +54,10 @@ const CategoryList = () => {
 			setNextPageURL("");
 			setUpperCategoryName("");
 		};
-	}, [id]);
+	}, [categoryID]);
 
 	const handleDelete = (id: string) => {
-		categoryService.deleteCategory({ id: id }).then(() => {
+		categoryService.deleteCategory({ categoryID: categoryID }).then(() => {
 			const newCategoriesCollection = categories.filter((obj:any) => obj.id !== id);
 			setCategories(newCategoriesCollection);
 		});
@@ -119,7 +120,7 @@ const CategoryList = () => {
 			<button className="btn btn-secondary mr-3" onClick={nextPage}>
 				Next
 			</button>
-			<Link to={(id ? id : "") + "/create"}>
+			<Link to={(categoryID ? categoryID : "") + "/create"}>
 				<button className="btn btn-primary">Добавить категорию</button>
 			</Link>
 		</div>

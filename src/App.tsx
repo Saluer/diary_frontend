@@ -33,11 +33,12 @@ const BaseLayout = () => (
 	</div>
 );
 
-const CategoryFlowDispatcher = () => {
+const CategoryFlowDispatcher = (props:any) => {
+	console.log(props);
 	return (
 		<Switch>
-			<Route path="/flow" component={FlowDispatcher} />
-			<Route path="/(category)?" component={CategoryDispatcher} />
+			<Route path="/category/:categoryID/flow" component={FlowDispatcher} />
+			<Route path="/(category)?"  component={CategoryDispatcher} />
 		</Switch>
 	);
 };

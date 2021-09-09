@@ -18,8 +18,8 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 
 	componentDidMount() {
 		if (this.params.action === "create")
-			if (this.params && this.params.id) {
-				categoryService.getCategories(this.params.id).then((category) => {
+			if (this.params && this.params.categoryID) {
+				categoryService.getCategories(this.params.categoryID).then((category) => {
 					this.setState({
 						upperCategoryName: category.upper_category.name,
 						name: category.name,
@@ -27,10 +27,10 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 					});
 				});
 			}
-			else this.params.id = "";
+			else this.params.categoryID = "";
 		else if (this.params.action === "update")
-			if (this.params && this.params.id) {
-				categoryService.getCategory({ id: this.params.id }).then((category) => {
+			if (this.params && this.params.categoryID) {
+				categoryService.getCategory({ id: this.params.categoryID }).then((category) => {
 					if (category.upper_category_name)
 						this.setState({ upperCategoryName: category.upper_category_name });
 					const categoryData = category.data;
@@ -39,20 +39,20 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 						description: categoryData.description,
 					});
 				});
-			} else this.params.id = "";
+			} else this.params.categoryID = "";
 	}
 
 	handleCreate = (event: FormEvent) => {
 		categoryService
 			.createCategory({
-				upperCategoryId: this.params.id,
+				upperCategoryId: this.params.categoryID,
 				name: this.state.name,
 				description: this.state.description,
 			})
 			.then(() => {
 				alert("Создано");
-				this.params.id
-					? this.props.history.push("/category/" + this.params.id)
+				this.params.categoryID
+					? this.props.history.push("/category/" + this.params.categoryID)
 					: this.props.history.push("/");
 			})
 			.catch(() => {
@@ -64,14 +64,14 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	handleUpdate = (event: FormEvent) => {
 		categoryService
 			.updateCategory({
-				id: this.params.id,
+				id: this.params.categoryID,
 				name: this.state.name,
 				description: this.state.description,
 			})
 			.then(() => {
 				alert("Category updated!");
-				this.params.id
-					? this.props.history.push("/category/" + this.params.id)
+				this.params.categoryID
+					? this.props.history.push("/category/" + this.params.categoryID)
 					: this.props.history.push("/");
 			})
 			.catch(() => {

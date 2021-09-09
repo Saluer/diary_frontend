@@ -8,9 +8,10 @@ const flowService = new FlowService();
 
 
 class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormState>  {
-	params:IParams;
+	params: IParams;
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
+		console.log(props);
 		this.state = {
 			categoryName: "Ошибка",
 			name: "",
@@ -22,14 +23,14 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 
 	componentDidMount() {
 		if (this.params.action === "create")
-			categoryService.getCategory({ id: this.params.id }).then((category) => {
+			categoryService.getCategory({ categoryID: this.params.categoryID }).then((category) => {
 				//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
-				this.setState({categoryName: category.data.name});
+				this.setState({ categoryName: category.data.name });
 			});
 		else if (this.params.action === "update")
-			flowService.getFlow({ id: this.params.id }).then((flow) => {
+			flowService.getFlow({ id: this.params.categoryID! }).then((flow) => {
 				if (flow.category_name)
-					this.setState({categoryName:  flow.category_name});
+					this.setState({ categoryName: flow.category_name });
 				const flowData = flow.data;
 				this.setState({ name: flowData.name, description: flowData.description });
 			});
@@ -39,15 +40,14 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 		flowService
 			.createFlow(
 				{
-					category: this.params.id,
+					category: this.params.categoryID!,
 					name: this.state.name,
 					description: this.state.description,
 				}
 			)
 			.then(() => {
-				console.log(this.state.description);
 				alert("Создано");
-				this.props.history.push("/category/" + this.params.id);
+				this.props.history.push("/category/" + this.params.categoryID);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");
@@ -58,13 +58,13 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 	handleUpdate = (event: FormEvent) => {
 		flowService
 			.updateFlow({
-				id: this.params.id,
+				id: this.params.categoryID!,
 				name: this.state.name,
 				description: this.state.description,
 			})
 			.then(() => {
 				alert("Flow updated!");
-				this.props.history.push("/flow/" + this.params.id);
+				this.props.history.push("/flow/" + this.params.categoryID);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");

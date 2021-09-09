@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import FlowService from "./FlowService";
+import { IParams } from "../types";
 const flowService = new FlowService();
 
 const FlowsTable = () => {
 	const [flows, setFlows] = useState<any[]>([]);
-	const { id } = useParams<{ id: string }>();
+	const id = useParams<IParams>().categoryID;
 	useEffect(() => {
 		if (id)
-			flowService.getFlows({ id }).then((flows) => {
+			flowService.getFlows({id}).then((flows) => {
 				setFlows(flows.data);
 			});
 		return () => {
@@ -50,7 +51,7 @@ const FlowsTable = () => {
 				id && <p>Список потоков пуст!</p>
 			)}
 			{id && (
-				<Link to={"/flow/" + id + "/create"}>
+				<Link to={id+ "/flow/create"}>
 					<button className="btn btn-primary my-3">Создать поток</button>
 				</Link>
 			)}
@@ -59,22 +60,24 @@ const FlowsTable = () => {
 };
 
 const Flow = (props: any & ({handleDelete:(id:string)=>void})) => {
+	const { flowID } = useParams<{ flowID: string }>();
+	console.log(flowID);
 	return (
 		<tr>
 			<td>{props.name}</td>
 			<td>{props.description}</td>
 			<td>
-				<Link to={"/flow/" + props.id}>
+				<Link to={flowID+ "/flow/" + props.flowID}>
 					<button className="btn btn-primary mr-3">Открыть поток</button>
 				</Link>
-				<Link to={"/flow/" + props.id + "/update"}>
+				<Link to={flowID + "/flow/" + props.flowID + "/update"}>
 					<button className="btn btn-secondary mr-3">
 						Редактировать поток
 					</button>
 				</Link>
 				<button
 					className="btn btn-danger mr-3"
-					onClick={() => props.handleDelete(props.id!)}
+					onClick={() => props.handleDelete(props.flowID!)}
 				>
 					Удалить поток
 				</button>

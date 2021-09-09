@@ -1,14 +1,10 @@
 export interface IParams {
-	id: string;
+	categoryID?: string;
+	flowID?:string;
 	action?: "create" | "update";
 }
 
-// export interface ICategoryAPI {
-// 	id?: string;
-// 	upperCategoryId?: string;
-// 	name?: string;
-// 	description?: string;
-// }
+
 
 export interface ICategoryFormState {
 	upperCategoryName?: string;
@@ -21,6 +17,13 @@ export interface IFlowFormState {
 	name: string;
 	description: string;
 }
+
+// export interface ICategoryAPI {
+// 	id?: string;
+// 	upperCategoryId?: string;
+// 	name?: string;
+// 	description?: string;
+// }
 
 // export interface IFlowActions {
 // 	id?: string;
