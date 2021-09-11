@@ -37,7 +37,7 @@ const CategoryFlowDispatcher = (props:any) => {
 	console.log(props);
 	return (
 		<Switch>
-			<Route path="/category/:categoryID/flow" component={FlowDispatcher} />
+			<Route path="/category/:categoryID(\d+)/flow" component={FlowDispatcher} />
 			<Route path="/(category)?"  component={CategoryDispatcher} />
 		</Switch>
 	);

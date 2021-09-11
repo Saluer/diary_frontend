@@ -16,12 +16,12 @@ export default class CategoryService {
 		return response.data;
 	}
 	async getCategory(category:any) {
-		const url = `${API_URL}/api/category/${category.id}`;
+		const url = `${API_URL}/api/category/${category.categoryID}`;
 		const response = await axios.get(url);
 		return response.data;
 	}
 	deleteCategory(category:any) {
-		const url = `${API_URL}/api/category/${category.id}`;
+		const url = `${API_URL}/api/category/${category.categoryID}`;
 		return axios.delete(url);
 	}
 	createCategory(category:any) {
@@ -29,7 +29,7 @@ export default class CategoryService {
 		return axios.post(url, category);
 	}
 	updateCategory(category:any) {
-		const url = `${API_URL}/api/category/${category.id}`;
+		const url = `${API_URL}/api/category/${category.categoryID}`;
 		return axios.put(url, category);
 	}
 }

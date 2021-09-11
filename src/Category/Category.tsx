@@ -7,22 +7,23 @@ import FlowsTable from "../Flow/FlowsTable";
 const categoryService = new CategoryService();
 
 
-const CategoryDispatcher = (props:any) => {
+const CategoryDispatcher = (props: any) => {
 	console.log(props);
 	return (
 		<Switch>
 			<Route path="/:action" exact component={CategoryForm} />
 			<Route
-				path="/category/:categoryID/:action"
+				path="/category/:categoryID(\d+)/:action"
 				exact
 				component={CategoryForm}
 			/>
-			<Route path="/(category)?/:categoryID?" exact component={CategoryInfo} />
+			<Route path="/(category)?/:categoryID(\d+)?" exact component={CategoryInfo} />
 		</Switch>
 	);
 };
 
-const CategoryInfo = () => {
+const CategoryInfo = (props:any) => {
+	console.log(props);
 	return (
 		<div>
 			<CategoryList />
@@ -32,7 +33,12 @@ const CategoryInfo = () => {
 };
 
 const CategoryList = () => {
-	const [categories, setCategories] = useState<any>([]);
+	const [categories, setCategories] = useState<{
+		id: number;
+		upperCategoryName: string;
+		name: string;
+		description: string;
+	}[]>([]);
 	const [nextPageURL, setNextPageURL] = useState("");
 	const [upperCategoryName, setUpperCategoryName] = useState("");
 	const [description, setDescription] = useState("");
@@ -40,7 +46,7 @@ const CategoryList = () => {
 	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
-	const { categoryID } = useParams<{ categoryID: string|undefined }>();
+	const { categoryID } = useParams<{ categoryID: string | undefined }>();
 	useEffect(() => {
 		categoryService.getCategories(categoryID).then((categories) => {
 			setCategories(categories.data);
@@ -58,7 +64,7 @@ const CategoryList = () => {
 
 	const handleDelete = (id: string) => {
 		categoryService.deleteCategory({ categoryID: categoryID }).then(() => {
-			const newCategoriesCollection = categories.filter((obj:any) => obj.id !== id);
+			const newCategoriesCollection = categories.filter((obj: any) => obj.id !== id);
 			setCategories(newCategoriesCollection);
 		});
 	};
@@ -83,7 +89,7 @@ const CategoryList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{categories.map((category:any) => (
+					{categories.map((category: any) => (
 						<tr key={category.id}>
 							<td>{category.id} </td>
 							<td>{category.name}</td>

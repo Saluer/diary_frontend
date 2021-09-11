@@ -22,13 +22,16 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 
 
 	componentDidMount() {
-		if (this.params.action === "create")
+		console.log(this.params);
+		if (this.params.action === "create"){
+			console.log(this.params.categoryID);
 			categoryService.getCategory({ categoryID: this.params.categoryID }).then((category) => {
 				//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
 				this.setState({ categoryName: category.data.name });
 			});
+		}
 		else if (this.params.action === "update")
-			flowService.getFlow({ id: this.params.categoryID! }).then((flow) => {
+			flowService.getFlow({ id: this.params.flowID! }).then((flow) => {
 				if (flow.category_name)
 					this.setState({ categoryName: flow.category_name });
 				const flowData = flow.data;
@@ -58,13 +61,13 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 	handleUpdate = (event: FormEvent) => {
 		flowService
 			.updateFlow({
-				id: this.params.categoryID!,
+				id: this.params.flowID!,
 				name: this.state.name,
 				description: this.state.description,
 			})
 			.then(() => {
 				alert("Flow updated!");
-				this.props.history.push("/flow/" + this.params.categoryID);
+				this.props.history.push("/flow/" + this.params.flowID);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");

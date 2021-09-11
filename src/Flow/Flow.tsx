@@ -5,8 +5,9 @@ const FlowDispatcher = (props: any) => {
 	console.log(props);
 	return (
 		<Switch>
-			<Route path="/category/:categoryID/flow/:flow/:action" exact component={FlowForm} />
-			<Route path="/category/:categoryID/flow/:flowID" exact component={FlowInfo} />
+			<Route path="/category/:categoryID(\d+)/flow/:flowID(\d+)" exact component={FlowInfo} />
+			<Route path="/category/:categoryID(\d+)/flow/:action" exact component={FlowForm} />
+			<Route path="/category/:categoryID(\d+)/flow/:flowID(\d+)/:action" exact component={FlowForm} />
 		</Switch>
 	);
 };

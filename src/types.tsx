@@ -1,10 +1,8 @@
 export interface IParams {
 	categoryID?: string;
-	flowID?:string;
+	flowID?: string;
 	action?: "create" | "update";
 }
-
-
 
 export interface ICategoryFormState {
 	upperCategoryName?: string;

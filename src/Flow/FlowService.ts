@@ -3,8 +3,8 @@ const API_URL = "http://localhost:8000";
 
 export default class FlowSerivce {
 	//!
-	async getFlows(flow: { id: string }) {
-		const url = `${API_URL}/api/flows/${flow.id}`;
+	async getFlows(flow: { categoryID: string }) {
+		const url = `${API_URL}/api/flows/${flow.categoryID}`;
 		const response = await axios.get(url);
 		return response.data;
 	}

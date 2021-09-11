@@ -5,17 +5,22 @@ import { IParams } from "../types";
 const flowService = new FlowService();
 
 const FlowsTable = () => {
-	const [flows, setFlows] = useState<any[]>([]);
-	const id = useParams<IParams>().categoryID;
+	const [flows, setFlows] = useState<{
+		id: number;
+		name: string;
+		description: string;
+		categoryName: string;
+	}[]>([]);
+	const categoryID = useParams<IParams>().categoryID;
 	useEffect(() => {
-		if (id)
-			flowService.getFlows({id}).then((flows) => {
+		if (categoryID)
+			flowService.getFlows({ categoryID }).then((flows) => {
 				setFlows(flows.data);
 			});
 		return () => {
 			setFlows([]);
 		};
-	}, [id]);
+	}, [categoryID]);
 
 	const handleDelete = (id: string) => {
 		flowService.deleteFlow({ id: id }).then(() => {
@@ -48,10 +53,10 @@ const FlowsTable = () => {
 					</tbody>
 				</table>
 			) : (
-				id && <p>Список потоков пуст!</p>
+				categoryID && <p>Список потоков пуст!</p>
 			)}
-			{id && (
-				<Link to={id+ "/flow/create"}>
+			{categoryID && (
+				<Link to={categoryID + "/flow/create"}>
 					<button className="btn btn-primary my-3">Создать поток</button>
 				</Link>
 			)}
@@ -59,18 +64,17 @@ const FlowsTable = () => {
 	);
 };
 
-const Flow = (props: any & ({handleDelete:(id:string)=>void})) => {
-	const { flowID } = useParams<{ flowID: string }>();
-	console.log(flowID);
+const Flow = (props: any & ({ handleDelete: (id: string) => void })) => {
+	const { categoryID } = useParams<{ categoryID: string }>();
 	return (
 		<tr>
 			<td>{props.name}</td>
 			<td>{props.description}</td>
 			<td>
-				<Link to={flowID+ "/flow/" + props.flowID}>
+				<Link to={categoryID + "/flow/" + props.id}>
 					<button className="btn btn-primary mr-3">Открыть поток</button>
 				</Link>
-				<Link to={flowID + "/flow/" + props.flowID + "/update"}>
+				<Link to={categoryID + "/flow/" + props.id + "/update"}>
 					<button className="btn btn-secondary mr-3">
 						Редактировать поток
 					</button>
