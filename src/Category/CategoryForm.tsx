@@ -30,7 +30,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 			else this.params.categoryID = "";
 		else if (this.params.action === "update")
 			if (this.params && this.params.categoryID) {
-				categoryService.getCategory({ id: this.params.categoryID }).then((category) => {
+				categoryService.getCategory( this.params.categoryID).then((category) => {
 					if (category.upper_category_name)
 						this.setState({ upperCategoryName: category.upper_category_name });
 					const categoryData = category.data;
@@ -45,7 +45,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	handleCreate = (event: FormEvent) => {
 		categoryService
 			.createCategory({
-				upperCategoryId: this.params.categoryID,
+				upperCategoryID: this.params.categoryID!,
 				name: this.state.name,
 				description: this.state.description,
 			})
@@ -64,7 +64,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	handleUpdate = (event: FormEvent) => {
 		categoryService
 			.updateCategory({
-				id: this.params.categoryID,
+				id: this.params.categoryID!,
 				name: this.state.name,
 				description: this.state.description,
 			})

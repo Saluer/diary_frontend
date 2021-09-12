@@ -14,7 +14,7 @@ const FlowsTable = () => {
 	const categoryID = useParams<IParams>().categoryID;
 	useEffect(() => {
 		if (categoryID)
-			flowService.getFlows({ categoryID }).then((flows) => {
+			flowService.getFlows(categoryID).then((flows) => {
 				setFlows(flows.data);
 			});
 		return () => {
@@ -22,9 +22,9 @@ const FlowsTable = () => {
 		};
 	}, [categoryID]);
 
-	const handleDelete = (id: string) => {
+	const handleDelete = (id: number) => {
 		flowService.deleteFlow({ id: id }).then(() => {
-			const newFlowsCollection = flows.filter((obj: any) => obj.id !== id);
+			const newFlowsCollection = flows.filter((flow: { id: number }) => flow.id !== id);
 			setFlows(newFlowsCollection);
 		});
 	};
@@ -64,7 +64,7 @@ const FlowsTable = () => {
 	);
 };
 
-const Flow = (props: any & ({ handleDelete: (id: string) => void })) => {
+const Flow = (props: { id: number, name: string, description: string, categoryName: string, handleDelete: (id: number) => void }) => {
 	const { categoryID } = useParams<{ categoryID: string }>();
 	return (
 		<tr>
@@ -81,7 +81,7 @@ const Flow = (props: any & ({ handleDelete: (id: string) => void })) => {
 				</Link>
 				<button
 					className="btn btn-danger mr-3"
-					onClick={() => props.handleDelete(props.flowID!)}
+					onClick={() => props.handleDelete(props.id)}
 				>
 					Удалить поток
 				</button>

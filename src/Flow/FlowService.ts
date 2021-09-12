@@ -3,17 +3,17 @@ const API_URL = "http://localhost:8000";
 
 export default class FlowSerivce {
 	//!
-	async getFlows(flow: { categoryID: string }) {
-		const url = `${API_URL}/api/flows/${flow.categoryID}`;
+	async getFlows(categoryID:string) {
+		const url = `${API_URL}/api/flows/${categoryID}`;
 		const response = await axios.get(url);
 		return response.data;
 	}
-	async getFlow(flow: { id: string }) {
-		const url = `${API_URL}/api/flow/${flow.id}`;
+	async getFlow(flowID :string) {
+		const url = `${API_URL}/api/flow/${flowID}`;
 		const response = await axios.get(url);
 		return response.data;
 	}
-	deleteFlow(flow: { id: string }) {
+	deleteFlow(flow: { id: number }) {
 		const url = `${API_URL}/api/flow/${flow.id}`;
 		return axios.delete(url);
 	}
@@ -21,8 +21,8 @@ export default class FlowSerivce {
 		const url = `${API_URL}/api/flow/${flow.category}`;
 		return axios.post(url, flow);
 	}
-	updateFlow(flow: { id: string; name: string; description: string }) {
-		const url = `${API_URL}/api/flow/${flow.id}`;
+	updateFlow(flow: { name: string; description: string }, flowID:string) {
+		const url = `${API_URL}/api/flow/${flowID}`;
 		return axios.put(url, flow);
 	}
 }

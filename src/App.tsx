@@ -33,8 +33,7 @@ const BaseLayout = () => (
 	</div>
 );
 
-const CategoryFlowDispatcher = (props:any) => {
-	console.log(props);
+const CategoryFlowDispatcher = () => {
 	return (
 		<Switch>
 			<Route path="/category/:categoryID(\d+)/flow" component={FlowDispatcher} />

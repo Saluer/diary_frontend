@@ -7,13 +7,12 @@ import FlowsTable from "../Flow/FlowsTable";
 const categoryService = new CategoryService();
 
 
-const CategoryDispatcher = (props: any) => {
-	console.log(props);
+const CategoryDispatcher = () => {
 	return (
 		<Switch>
-			<Route path="/:action" exact component={CategoryForm} />
+			<Route path="/:action(\w+)" exact component={CategoryForm} />
 			<Route
-				path="/category/:categoryID(\d+)/:action"
+				path="/category/:categoryID(\d+)/:action(\w+)"
 				exact
 				component={CategoryForm}
 			/>
@@ -22,8 +21,7 @@ const CategoryDispatcher = (props: any) => {
 	);
 };
 
-const CategoryInfo = (props:any) => {
-	console.log(props);
+const CategoryInfo = () => {
 	return (
 		<div>
 			<CategoryList />
@@ -62,9 +60,9 @@ const CategoryList = () => {
 		};
 	}, [categoryID]);
 
-	const handleDelete = (id: string) => {
-		categoryService.deleteCategory({ categoryID: categoryID }).then(() => {
-			const newCategoriesCollection = categories.filter((obj: any) => obj.id !== id);
+	const handleDelete = (id: number) => {
+		categoryService.deleteCategory({ id: id }).then(() => {
+			const newCategoriesCollection = categories.filter((category: { id: number }) => category.id !== id);
 			setCategories(newCategoriesCollection);
 		});
 	};
@@ -89,7 +87,7 @@ const CategoryList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{categories.map((category: any) => (
+					{categories.map((category: { id: number, name: string, description: string }) => (
 						<tr key={category.id}>
 							<td>{category.id} </td>
 							<td>{category.name}</td>
