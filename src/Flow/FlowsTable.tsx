@@ -12,19 +12,23 @@ const FlowsTable = () => {
 		categoryName: string;
 	}[]>([]);
 	const categoryID = useParams<IParams>().categoryID;
+	let L_categoryID = 0;
+	if(categoryID)
+		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
-		if (categoryID)
-			flowService.getFlows(categoryID).then((flows) => {
+		if (L_categoryID)
+			flowService.getFlows(L_categoryID).then((flows) => {
 				setFlows(flows.data);
 			});
 		return () => {
 			setFlows([]);
 		};
-	}, [categoryID]);
+	}, [L_categoryID]);
 
-	const handleDelete = (id: number) => {
-		flowService.deleteFlow({ id: id }).then(() => {
-			const newFlowsCollection = flows.filter((flow: { id: number }) => flow.id !== id);
+	const handleDelete = (flowID: number) => {
+		flowService.deleteFlow(flowID).then(() => {
+			//?
+			const newFlowsCollection = flows.filter((flow: { id: number }) => flow.id !== flowID);
 			setFlows(newFlowsCollection);
 		});
 	};
@@ -53,10 +57,10 @@ const FlowsTable = () => {
 					</tbody>
 				</table>
 			) : (
-				categoryID && <p>Список потоков пуст!</p>
+				L_categoryID > 0 && <p>Список потоков пуст!</p>
 			)}
-			{categoryID && (
-				<Link to={categoryID + "/flow/create"}>
+			{L_categoryID > 0 && (
+				<Link to={L_categoryID + "/flow/create"}>
 					<button className="btn btn-primary my-3">Создать поток</button>
 				</Link>
 			)}
@@ -66,15 +70,18 @@ const FlowsTable = () => {
 
 const Flow = (props: { id: number, name: string, description: string, categoryName: string, handleDelete: (id: number) => void }) => {
 	const { categoryID } = useParams<{ categoryID: string }>();
+	let L_categoryID = 0;
+	if(categoryID)
+		L_categoryID = parseInt(categoryID);
 	return (
 		<tr>
 			<td>{props.name}</td>
 			<td>{props.description}</td>
 			<td>
-				<Link to={categoryID + "/flow/" + props.id}>
+				<Link to={L_categoryID + "/flow/" + props.id}>
 					<button className="btn btn-primary mr-3">Открыть поток</button>
 				</Link>
-				<Link to={categoryID + "/flow/" + props.id + "/update"}>
+				<Link to={L_categoryID + "/flow/" + props.id + "/update"}>
 					<button className="btn btn-secondary mr-3">
 						Редактировать поток
 					</button>

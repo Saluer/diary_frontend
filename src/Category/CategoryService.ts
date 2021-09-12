@@ -4,7 +4,7 @@ const API_URL = "http://localhost:8000";
 
 export default class CategoryService {
 	
-	async getCategories(upperCategoryID="") {
+	async getCategories(upperCategoryID:number) {
 		const url = `${API_URL}/api/categories/${upperCategoryID}`;
 		const response = await axios.get(url);
 		return response.data;
@@ -14,20 +14,20 @@ export default class CategoryService {
 		const response = await axios.get(url);
 		return response.data;
 	}
-	async getCategory(categoryID:string) {
+	async getCategory(categoryID:number) {
 		const url = `${API_URL}/api/category/${categoryID}`;
 		const response = await axios.get(url);
 		return response.data;
 	}
-	deleteCategory(category:{id:number}) {
-		const url = `${API_URL}/api/category/${category.id}`;
+	deleteCategory(categoryID:number) {
+		const url = `${API_URL}/api/category/${categoryID}`;
 		return axios.delete(url);
 	}
-	createCategory(category:{upperCategoryID:string, name:string, description:string}) {
+	createCategory(category:{upperCategoryID:number, name:string, description:string}) {
 		const url = `${API_URL}/api/category/${category.upperCategoryID}`;
 		return axios.post(url, category);
 	}
-	updateCategory(category:{id:string, name:string, description:string}) {
+	updateCategory(category:{id:number, name:string, description:string}) {
 		const url = `${API_URL}/api/category/${category.id}`;
 		return axios.put(url, category);
 	}

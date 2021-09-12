@@ -44,9 +44,12 @@ const CategoryList = () => {
 	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
-	const { categoryID } = useParams<{ categoryID: string | undefined }>();
+	const { categoryID } = useParams<{ categoryID?: string }>();
+	let L_categoryID = 0;
+	if(categoryID)
+		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
-		categoryService.getCategories(categoryID).then((categories) => {
+		categoryService.getCategories(L_categoryID).then((categories) => {
 			setCategories(categories.data);
 			setNextPageURL(categories.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
@@ -58,10 +61,10 @@ const CategoryList = () => {
 			setNextPageURL("");
 			setUpperCategoryName("");
 		};
-	}, [categoryID]);
+	}, [L_categoryID ]);
 
 	const handleDelete = (id: number) => {
-		categoryService.deleteCategory({ id: id }).then(() => {
+		categoryService.deleteCategory(L_categoryID ).then(() => {
 			const newCategoriesCollection = categories.filter((category: { id: number }) => category.id !== id);
 			setCategories(newCategoriesCollection);
 		});
@@ -124,7 +127,7 @@ const CategoryList = () => {
 			<button className="btn btn-secondary mr-3" onClick={nextPage}>
 				Next
 			</button>
-			<Link to={(categoryID ? categoryID : "") + "/create"}>
+			<Link to={(L_categoryID  ? L_categoryID  : "") + "/create"}>
 				<button className="btn btn-primary">Добавить категорию</button>
 			</Link>
 		</div>

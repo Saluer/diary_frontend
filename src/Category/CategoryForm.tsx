@@ -5,7 +5,8 @@ import { IParams, ICategoryFormState } from "../types";
 const categoryService = new CategoryService();
 
 class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICategoryFormState> {
-	params:IParams;
+	private params: IParams;
+	private L_categoryID: number = 0;
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
@@ -14,12 +15,14 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 			description: "",
 		};
 		this.params = this.props.match.params;
+		if (this.params.categoryID)
+			this.L_categoryID = parseInt(this.params.categoryID);
 	}
 
 	componentDidMount() {
-		if (this.params.action === "create")
-			if (this.params && this.params.categoryID) {
-				categoryService.getCategories(this.params.categoryID).then((category) => {
+		if (this.params.action === "create"){
+			if (this.L_categoryID) {
+				categoryService.getCategories(this.L_categoryID).then((category) => {
 					this.setState({
 						upperCategoryName: category.upper_category.name,
 						name: category.name,
@@ -27,10 +30,10 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 					});
 				});
 			}
-			else this.params.categoryID = "";
+		}
 		else if (this.params.action === "update")
-			if (this.params && this.params.categoryID) {
-				categoryService.getCategory( this.params.categoryID).then((category) => {
+			if (this.L_categoryID) {
+				categoryService.getCategory(this.L_categoryID).then((category) => {
 					if (category.upper_category_name)
 						this.setState({ upperCategoryName: category.upper_category_name });
 					const categoryData = category.data;
@@ -39,20 +42,20 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 						description: categoryData.description,
 					});
 				});
-			} else this.params.categoryID = "";
+			}
 	}
 
 	handleCreate = (event: FormEvent) => {
 		categoryService
 			.createCategory({
-				upperCategoryID: this.params.categoryID!,
+				upperCategoryID: this.L_categoryID ,
 				name: this.state.name,
 				description: this.state.description,
 			})
 			.then(() => {
 				alert("Создано");
-				this.params.categoryID
-					? this.props.history.push("/category/" + this.params.categoryID)
+				this.L_categoryID 
+					? this.props.history.push("/category/" + this.L_categoryID )
 					: this.props.history.push("/");
 			})
 			.catch(() => {
@@ -64,14 +67,15 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	handleUpdate = (event: FormEvent) => {
 		categoryService
 			.updateCategory({
-				id: this.params.categoryID!,
+				id: this.L_categoryID,
 				name: this.state.name,
 				description: this.state.description,
 			})
 			.then(() => {
 				alert("Category updated!");
-				this.params.categoryID
-					? this.props.history.push("/category/" + this.params.categoryID)
+				//? Вернёт ли false  в случае 0?
+				this.L_categoryID
+					? this.props.history.push("/category/" + this.L_categoryID)
 					: this.props.history.push("/");
 			})
 			.catch(() => {

@@ -8,29 +8,31 @@ const flowService = new FlowService();
 
 
 class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormState>  {
-	params: IParams;
+	private params: IParams;
+	private L_flowID: number = 0;
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
-		console.log(props);
 		this.state = {
 			categoryName: "Ошибка",
 			name: "",
 			description: "",
 		};
 		this.params = this.props.match.params;
+		if (this.params.flowID)
+			this.L_flowID = parseInt(this.params.flowID);
 	}
 
 
 	componentDidMount() {
 		console.log(this.params);
 		if (this.params.action === "create") {
-			categoryService.getCategory(this.params.categoryID!).then((category) => {
+			categoryService.getCategory(this.L_flowID).then((category) => {
 				//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
 				this.setState({ categoryName: category.data.name });
 			});
 		}
 		else if (this.params.action === "update")
-			flowService.getFlow(this.params.flowID!).then((flow) => {
+			flowService.getFlow(this.L_flowID).then((flow) => {
 				if (flow.category_name)
 					this.setState({ categoryName: flow.category_name });
 				const flowData = flow.data;
@@ -42,7 +44,7 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 		flowService
 			.createFlow(
 				{
-					category: this.params.categoryID!,
+					category: this.L_flowID,
 					name: this.state.name,
 					description: this.state.description,
 				}
@@ -62,10 +64,10 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 			.updateFlow({
 				name: this.state.name,
 				description: this.state.description,
-			}, this.params.flowID!)
+			}, this.L_flowID)
 			.then(() => {
 				alert("Flow updated!");
-				this.props.history.push("/category/" + this.params.categoryID + "/flow/" + this.params.flowID);
+				this.props.history.push("/category/" + this.params.categoryID + "/flow/" + this.L_flowID);
 			})
 			.catch(() => {
 				alert("Вы допустили ошибку при заполнении формы!");
