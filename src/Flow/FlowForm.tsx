@@ -10,6 +10,7 @@ const flowService = new FlowService();
 class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormState>  {
 	private params: IParams;
 	private L_flowID: number = 0;
+	private L_categoryID: number = 0;
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
@@ -20,13 +21,16 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 		this.params = this.props.match.params;
 		if (this.params.flowID)
 			this.L_flowID = parseInt(this.params.flowID);
+		if (this.params.categoryID)
+			this.L_categoryID = parseInt(this.params.categoryID);
 	}
 
 
 	componentDidMount() {
-		console.log(this.params);
 		if (this.params.action === "create") {
-			categoryService.getCategory(this.L_flowID).then((category: {
+			categoryService.getCategory(this.L_categoryID).then((category: {
+				//TODO Подумать, почему указываю в типе одно, а возвращает промис — другое (почему-то добавляется id)
+				//TODO В целом рассмотреть тип ниже и с ним связанное
 				data: {
 					name: string;
 					description: string;
@@ -34,11 +38,12 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 				upper_category_name:string;
 			}) => {
 				//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
-				this.setState({ categoryName: category.data.name });
+				this.setState({ categoryName: category.data.name});
+				console.log(category.data.name);
 			});
 		}
 		else if (this.params.action === "update")
-			flowService.getFlow(this.L_flowID).then((flow:any) => {
+			flowService.getFlow(this.L_flowID).then((flow) => {
 				if (flow.category_name)
 					this.setState({ categoryName: flow.category_name });
 				const flowData = flow.data;
@@ -50,7 +55,7 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 		flowService
 			.createFlow(
 				{
-					category: this.L_flowID,
+					categoryID: this.L_categoryID,
 					name: this.state.name,
 					description: this.state.description,
 				}

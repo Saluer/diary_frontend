@@ -29,13 +29,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 					},
 					upper_category_name: string;
 				}) => {
-					if (category.upper_category_name)
-						this.setState({ upperCategoryName: category.upper_category_name });
-					const categoryData = category.data;
-					this.setState({
-						name: categoryData.name,
-						description: categoryData.description,
-					});
+					this.setState({ upperCategoryName: category.data.name });
 				});
 			}
 		}

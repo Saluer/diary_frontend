@@ -9,11 +9,10 @@ const FlowsTable = () => {
 		id: number;
 		name: string;
 		description: string;
-		categoryName: string;
 	}[]>([]);
 	const categoryID = useParams<IParams>().categoryID;
 	let L_categoryID = 0;
-	if(categoryID)
+	if (categoryID)
 		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
 		if (L_categoryID)
@@ -27,8 +26,7 @@ const FlowsTable = () => {
 
 	const handleDelete = (flowID: number) => {
 		flowService.deleteFlow(flowID).then(() => {
-			//?
-			const newFlowsCollection = flows.filter((flow: { id: number }) => flow.id !== flowID);
+			const newFlowsCollection = flows.filter((flow) => flow.id !== flowID);
 			setFlows(newFlowsCollection);
 		});
 	};
@@ -50,7 +48,6 @@ const FlowsTable = () => {
 								id={flow.id}
 								name={flow.name}
 								description={flow.description}
-								categoryName={flow.categoryName}
 								handleDelete={handleDelete}
 							/>
 						))}
@@ -68,10 +65,10 @@ const FlowsTable = () => {
 	);
 };
 
-const Flow = (props: { id: number, name: string, description: string, categoryName: string, handleDelete: (id: number) => void }) => {
+const Flow = (props: { id: number, name: string, description: string, handleDelete: (id: number) => void }) => {
 	const { categoryID } = useParams<{ categoryID: string }>();
 	let L_categoryID = 0;
-	if(categoryID)
+	if (categoryID)
 		L_categoryID = parseInt(categoryID);
 	return (
 		<tr>

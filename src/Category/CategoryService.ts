@@ -1,31 +1,6 @@
 import axios from "axios";
 const API_URL = "http://localhost:8000";
 
-interface IGetFullCategoryInfo {
-	categories_data: {
-		id: number;
-		name: string;
-		description: string;
-	}[];
-	nextLink: string;
-	upper_category_data: { name: string; description: string };
-}
-
-interface ICreateUpdate {
-	id?: number;
-	upperCategoryID?: number;
-	name: string;
-	description: string;
-}
-
-interface IGetCategory {
-	data: {
-		name: string;
-		description: string;
-	};
-	upper_category_name: string;
-}
-
 export default class CategoryService {
 	async getCategories(upperCategoryID: number) {
 		const url = `${API_URL}/api/categories/${upperCategoryID}`;
@@ -46,12 +21,37 @@ export default class CategoryService {
 		const url = `${API_URL}/api/category/${categoryID}`;
 		return axios.delete<void>(url);
 	}
-	createCategory(category: ICreateUpdate) {
+	createCategory(category: ICreateUpdateCategory) {
 		const url = `${API_URL}/api/category/${category.upperCategoryID}`;
 		return axios.post<void>(url, category);
 	}
-	updateCategory(category: ICreateUpdate) {
+	updateCategory(category: ICreateUpdateCategory) {
 		const url = `${API_URL}/api/category/${category.id}`;
 		return axios.put<void>(url, category);
 	}
+}
+
+interface IGetFullCategoryInfo {
+	categories_data: {
+		id: number;
+		name: string;
+		description: string;
+	}[];
+	nextLink: string;
+	upper_category_data: { name: string; description: string };
+}
+
+interface ICreateUpdateCategory {
+	id?: number;
+	upperCategoryID?: number;
+	name: string;
+	description: string;
+}
+
+interface IGetCategory {
+	data: {
+		name: string;
+		description: string;
+	};
+	upper_category_name: string;
 }
