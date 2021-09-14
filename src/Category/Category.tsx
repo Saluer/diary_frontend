@@ -33,7 +33,6 @@ const CategoryInfo = () => {
 const CategoryList = () => {
 	const [categories, setCategories] = useState<{
 		id: number;
-		upperCategoryName: string;
 		name: string;
 		description: string;
 	}[]>([]);
@@ -46,34 +45,42 @@ const CategoryList = () => {
 	//Считай, функция берёт данные из роутера, не из параметров
 	const { categoryID } = useParams<{ categoryID?: string }>();
 	let L_categoryID = 0;
-	if(categoryID)
+	if (categoryID)
 		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
-		categoryService.getCategories(L_categoryID).then((categories) => {
-			setCategories(categories.data);
-			setNextPageURL(categories.nextLink);
+		categoryService.getCategories(L_categoryID).then((response: {
+			categories_data: {
+				id: number;
+				name: string;
+				description: string;
+			}[],
+			nextLink: string,
+			upper_category_data: { name: string, description: string }
+		}) => {
+			setCategories(response.categories_data);
+			setNextPageURL(response.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
-			setUpperCategoryName(categories.upper_category.name);
-			setDescription(categories.upper_category.description);
+			setUpperCategoryName(response.upper_category_data.name);
+			setDescription(response.upper_category_data.description);
 		});
 		return () => {
 			setCategories([]);
 			setNextPageURL("");
 			setUpperCategoryName("");
 		};
-	}, [L_categoryID ]);
+	}, [L_categoryID]);
 
 	const handleDelete = (id: number) => {
-		categoryService.deleteCategory(L_categoryID ).then(() => {
+		categoryService.deleteCategory(L_categoryID).then(() => {
 			const newCategoriesCollection = categories.filter((category: { id: number }) => category.id !== id);
 			setCategories(newCategoriesCollection);
 		});
 	};
 
 	const nextPage = () => {
-		categoryService.getCategoriesByURL(nextPageURL).then((categories) => {
-			setCategories(categories.data);
-			setNextPageURL(categories.nextLink);
+		categoryService.getCategoriesByURL(nextPageURL).then((response) => {
+			setCategories(response.categories_data);
+			setNextPageURL(response.nextLink);
 		});
 	};
 
@@ -127,7 +134,7 @@ const CategoryList = () => {
 			<button className="btn btn-secondary mr-3" onClick={nextPage}>
 				Next
 			</button>
-			<Link to={(L_categoryID  ? L_categoryID  : "") + "/create"}>
+			<Link to={(L_categoryID ? L_categoryID : "") + "/create"}>
 				<button className="btn btn-primary">Добавить категорию</button>
 			</Link>
 		</div>

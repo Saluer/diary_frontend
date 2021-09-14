@@ -17,8 +17,8 @@ const FlowsTable = () => {
 		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
 		if (L_categoryID)
-			flowService.getFlows(L_categoryID).then((flows) => {
-				setFlows(flows.data);
+			flowService.getFlows(L_categoryID).then((response) => {
+				setFlows(response.flows_data);
 			});
 		return () => {
 			setFlows([]);
