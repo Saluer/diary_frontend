@@ -4,6 +4,8 @@ import FlowService from "./FlowService";
 import { IParams } from "../types";
 const flowService = new FlowService();
 
+const MAIN_CATEGORY = 0;
+
 const FlowsTable = () => {
 	const [flows, setFlows] = useState<{
 		id: number;
@@ -11,7 +13,7 @@ const FlowsTable = () => {
 		description: string;
 	}[]>([]);
 	const categoryID = useParams<IParams>().categoryID;
-	let L_categoryID = 0;
+	let L_categoryID = MAIN_CATEGORY;
 	if (categoryID)
 		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
@@ -54,9 +56,9 @@ const FlowsTable = () => {
 					</tbody>
 				</table>
 			) : (
-				L_categoryID > 0 && <p>Список потоков пуст!</p>
+				L_categoryID !== MAIN_CATEGORY && <p>Список потоков пуст!</p>
 			)}
-			{L_categoryID > 0 && (
+			{L_categoryID !== MAIN_CATEGORY && (
 				<Link to={L_categoryID + "/flow/create"}>
 					<button className="btn btn-primary my-3">Создать поток</button>
 				</Link>

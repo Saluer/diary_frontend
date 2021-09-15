@@ -1,7 +1,12 @@
+export enum EActions {
+	create = "create",
+	update = "update"
+}
+
 export interface IParams {
 	categoryID?: string;
 	flowID?: string;
-	action?: "create" | "update";
+	action?: EActions.create | EActions.update;
 }
 
 export interface ICategoryFormState {

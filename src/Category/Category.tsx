@@ -5,6 +5,7 @@ import CategoryForm from "./CategoryForm";
 import FlowsTable from "../Flow/FlowsTable";
 const categoryService = new CategoryService();
 
+const MAIN_CATEGORY = 0;
 
 const CategoryDispatcher = () => {
 	return (
@@ -43,7 +44,7 @@ const CategoryList = () => {
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
 	const { categoryID } = useParams<{ categoryID?: string }>();
-	let L_categoryID = 0;
+	let L_categoryID = MAIN_CATEGORY;
 	if (categoryID)
 		L_categoryID = parseInt(categoryID);
 
@@ -126,7 +127,7 @@ const CategoryList = () => {
 			<button className="btn btn-secondary mr-3" onClick={nextPage}>
 				Next
 			</button>
-			<Link to={(L_categoryID ? L_categoryID : "") + "/create"}>
+			<Link to={(L_categoryID !== MAIN_CATEGORY ? L_categoryID : "") + "/create"}>
 				<button className="btn btn-primary">Добавить категорию</button>
 			</Link>
 		</div>

@@ -1,16 +1,25 @@
 import React, { FormEvent } from "react";
 import CategoryService from "./CategoryService";
 import { RouteComponentProps } from "react-router";
-import { IParams, ICategoryFormState } from "../types";
+import { IParams, ICategoryFormState, EActions } from "../types";
 const categoryService = new CategoryService();
+
+
+const CATEGORY_NAME_ERROR = "Основная категория"
+const CREATION_SUCCESS_MESSAGE = "Вы успешно создали объект"
+const CREATION_ERROR_MESSAGE = "Произошла ошибка при создании объекта"
+const UPDATE_SUCCESS_MESSAGE = "Вы успешно обновили объект"
+const UPDATE_ERROR_MESSAGE = "Произошла ошибка при обновлении объекта"
+
+const MAIN_CATEGORY = 0;
 
 class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICategoryFormState> {
 	private params: IParams;
-	private L_categoryID: number = 0;
+	private L_categoryID: number = MAIN_CATEGORY;
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
-			upperCategoryName: "Основная категория",
+			upperCategoryName: CATEGORY_NAME_ERROR,
 			name: "",
 			description: "",
 		};
@@ -20,7 +29,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	}
 
 	componentDidMount() {
-		if (this.params.action === "create") {
+		if (this.params.action === EActions.create) {
 			if (this.L_categoryID) {
 				categoryService.getCategory(this.L_categoryID).then((category: {
 					data: {
@@ -33,7 +42,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 				});
 			}
 		}
-		else if (this.params.action === "update")
+		else if (this.params.action === EActions.update)
 			if (this.L_categoryID) {
 				categoryService.getCategory(this.L_categoryID).then((category: {
 					data: {
@@ -61,13 +70,13 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 				description: this.state.description,
 			})
 			.then(() => {
-				alert("Создано");
-				this.L_categoryID
+				alert(CREATION_SUCCESS_MESSAGE);
+				this.L_categoryID !== MAIN_CATEGORY
 					? this.props.history.push("/category/" + this.L_categoryID)
 					: this.props.history.push("/");
 			})
 			.catch(() => {
-				alert("There was an error! Please re-check your form.");
+				alert(CREATION_ERROR_MESSAGE);
 			});
 		event.preventDefault();
 	};
@@ -80,14 +89,13 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 				description: this.state.description,
 			})
 			.then(() => {
-				alert("Category updated!");
-				//? Вернёт ли false  в случае 0?
-				this.L_categoryID
+				alert(UPDATE_SUCCESS_MESSAGE);
+				this.L_categoryID !== MAIN_CATEGORY
 					? this.props.history.push("/category/" + this.L_categoryID)
 					: this.props.history.push("/");
 			})
 			.catch(() => {
-				alert("Вы допустили ошибку при заполнении формы!");
+				alert(UPDATE_ERROR_MESSAGE);
 			});
 		event.preventDefault();
 	};
@@ -97,8 +105,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	};
 
 	render() {
-		console.log(this.params);
-		if (this.params.action === "create")
+		if (this.params.action === EActions.create)
 			return (
 				<form onSubmit={this.handleCreate}>
 					<div className="form-group">
@@ -132,7 +139,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 					</div>
 				</form>
 			);
-		else if (this.params.action === "update")
+		else if (this.params.action === EActions.update)
 			return (
 				<form onSubmit={this.handleUpdate}>
 					<div className="form-group">

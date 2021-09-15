@@ -1,20 +1,28 @@
 import React, { FormEvent } from "react";
 import FlowService from "./FlowService";
 import CategoryService from "../Category/CategoryService";
-import { IFlowFormState, IParams } from "../types";
+import { IFlowFormState, IParams, EActions } from "../types";
 import { RouteComponentProps } from "react-router";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
 
+const MAIN_CATEGORY = 0;
+const NULL_FLOW = 0;
+const CATEGORY_NAME_ERROR = "Ошибка"
+const CREATION_SUCCESS_MESSAGE = "Вы успешно создали объект"
+const CREATION_ERROR_MESSAGE = "Произошла ошибка при создании объекта"
+const UPDATE_SUCCESS_MESSAGE = "Вы успешно обновили объект"
+const UPDATE_ERROR_MESSAGE = "Произошла ошибка при обновлении объекта"
+
 class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormState>  {
 	private params: IParams;
-	private L_flowID: number = 0;
-	private L_categoryID: number = 0;
+	private L_flowID: number = NULL_FLOW;
+	private L_categoryID: number = MAIN_CATEGORY;
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
-			categoryName: "Ошибка",
+			categoryName: CATEGORY_NAME_ERROR,
 			name: "",
 			description: "",
 		};
@@ -27,7 +35,7 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 
 
 	componentDidMount() {
-		if (this.params.action === "create") {
+		if (this.params.action === EActions.create) {
 			categoryService.getCategory(this.L_categoryID).then((category: {
 				//TODO Подумать, почему указываю в типе одно, а возвращает промис — другое (почему-то добавляется id)
 				//TODO В целом рассмотреть тип ниже и с ним связанное
@@ -35,14 +43,13 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 					name: string;
 					description: string;
 				},
-				upper_category_name:string;
+				upper_category_name: string;
 			}) => {
 				//TODO Ужасный код вместе с импортом CategoryService. Нужно обдумать его замену
-				this.setState({ categoryName: category.data.name});
-				console.log(category.data.name);
+				this.setState({ categoryName: category.data.name });
 			});
 		}
-		else if (this.params.action === "update")
+		else if (this.params.action === EActions.update)
 			flowService.getFlow(this.L_flowID).then((flow) => {
 				if (flow.category_name)
 					this.setState({ categoryName: flow.category_name });
@@ -61,11 +68,11 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 				}
 			)
 			.then(() => {
-				alert("Создано");
+				alert(CREATION_SUCCESS_MESSAGE);
 				this.props.history.push("/category/" + this.params.categoryID);
 			})
 			.catch(() => {
-				alert("Вы допустили ошибку при заполнении формы!");
+				alert(CREATION_ERROR_MESSAGE);
 			});
 		event.preventDefault();
 	};
@@ -77,11 +84,11 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 				description: this.state.description,
 			}, this.L_flowID)
 			.then(() => {
-				alert("Flow updated!");
+				alert(UPDATE_SUCCESS_MESSAGE);
 				this.props.history.push("/category/" + this.params.categoryID + "/flow/" + this.L_flowID);
 			})
 			.catch(() => {
-				alert("Вы допустили ошибку при заполнении формы!");
+				alert(UPDATE_ERROR_MESSAGE);
 			});
 		event.preventDefault();
 	};
