@@ -70,7 +70,7 @@ const CategoryList = () => {
 	}, [L_categoryID]);
 
 	const handleDelete = (id: number) => {
-		categoryService.deleteCategory(L_categoryID).then(() => {
+		categoryService.deleteCategory(id).then(() => {
 			const newCategoriesCollection = categories.filter((category: { id: number }) => category.id !== id);
 			setCategories(newCategoriesCollection);
 		});
