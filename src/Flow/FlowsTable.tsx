@@ -24,9 +24,9 @@ const FlowsTable = () => {
 		};
 	}, [L_categoryID]);
 
-	const handleDelete = (flowID: number) => {
-		flowService.deleteFlow(flowID).then(() => {
-			const newFlowsCollection = flows.filter((flow) => flow.id !== flowID);
+	const handleDelete = (id: number) => {
+		flowService.deleteFlow(id).then(() => {
+			const newFlowsCollection = flows.filter((flow) => flow.id !== id);
 			setFlows(newFlowsCollection);
 		});
 	};

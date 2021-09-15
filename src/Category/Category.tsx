@@ -46,16 +46,9 @@ const CategoryList = () => {
 	let L_categoryID = 0;
 	if (categoryID)
 		L_categoryID = parseInt(categoryID);
+
 	useEffect(() => {
-		categoryService.getCategories(L_categoryID).then((response: {
-			categories_data: {
-				id: number;
-				name: string;
-				description: string;
-			}[],
-			nextLink: string,
-			upper_category_data: { name: string, description: string }
-		}) => {
+		categoryService.getCategories(L_categoryID).then((response) => {
 			setCategories(response.categories_data);
 			setNextPageURL(response.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
@@ -84,7 +77,7 @@ const CategoryList = () => {
 	};
 
 	return (
-		<div className="categories--list">
+		<div className="categories-list">
 			<h2>{upperCategoryName}</h2>
 			<h4>{description}</h4>
 			<table className="table">
