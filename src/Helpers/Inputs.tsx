@@ -1,8 +1,6 @@
 import React from "react";
 
 export const Input = (props: any) => {
-console.log("🚀 ~ file: Inputs.tsx ~ line 4 ~ Input ~ props", props)
-    
     return (
         <>
             {props.type === "text" && <label htmlFor="" className="mt-2">{props.labelText}</label>}

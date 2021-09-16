@@ -4,6 +4,8 @@ import { RouteComponentProps } from "react-router";
 import { IParams, ICategoryFormState, EActions, ICreateUpdateCategory } from "../types";
 import { Input } from "../Helpers/Inputs";
 import { AxiosResponse } from "axios";
+import { CategoryFormActions } from "./CategoryFormActions";
+const categoryFormActions = new CategoryFormActions();
 const categoryService = new CategoryService();
 
 
@@ -14,10 +16,11 @@ const UPDATE_SUCCESS_MESSAGE = "Вы успешно обновили объек�
 const UPDATE_ERROR_MESSAGE = "Произошла ошибка при обновлении объекта"
 
 const MAIN_CATEGORY = 0;
-
+//Передаём интерфейс состояний
 class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICategoryFormState> {
 	private params: IParams;
 	private L_categoryID: number = MAIN_CATEGORY;
+	//Создаём объект с функциями, который для каждого вида формы имеет свои реализации функций
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
@@ -31,52 +34,63 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 	}
 
 	componentDidMount() {
+		//В зависимости от истинности условий выполняем нужный код объекта с функциями
+		//Однако чтобы передать ему управление состоянием, нужно передать функцию в колбэк
+		//Либо же, если есть Redux, то он сам изменит состояние компонента
 		if (this.params.action === EActions.create) {
 			if (this.L_categoryID) {
-				categoryService.getCategory(this.L_categoryID).then((category: {
-					data: {
-						name: string;
-						description: string;
-					},
-					upper_category_name: string;
-				}) => {
-					this.setState({ upperCategoryName: category.data.name });
-				});
+				// categoryService.getCategory(this.L_categoryID).then((category: {
+				// 	data: {
+				// 		name: string;
+				// 		description: string;
+				// 	},
+				// 	upper_category_name: string;
+				// }) => {
+				// 	this.setState({ upperCategoryName: category.data.name });
+				// });
+				categoryFormActions.initialize(this.params.action,
+					(value:any) => {
+						this.setState(value)
+					}, this.L_categoryID)
 			}
 		}
 		else if (this.params.action === EActions.update)
 			if (this.L_categoryID) {
-				categoryService.getCategory(this.L_categoryID).then((category: {
-					data: {
-						name: string;
-						description: string;
-					},
-					upper_category_name: string;
-				}) => {
-					if (category.upper_category_name)
-						this.setState({ upperCategoryName: category.upper_category_name });
-					const categoryData = category.data;
-					this.setState({
-						name: categoryData.name,
-						description: categoryData.description,
-					});
-				});
+				// categoryService.getCategory(this.L_categoryID).then((category: {
+				// 	data: {
+				// 		name: string;
+				// 		description: string;
+				// 	},
+				// 	upper_category_name: string;
+				// }) => {
+				// 	if (category.upper_category_name)
+				// 		this.setState({ upperCategoryName: category.upper_category_name });
+				// 	const categoryData = category.data;
+				// 	this.setState({
+				// 		name: categoryData.name,
+				// 		description: categoryData.description,
+				// 	});
+				// });
+				categoryFormActions.initialize(this.params.action,
+					(value:any) => {
+						this.setState(value);
+					}, this.L_categoryID)
 			}
 	}
 
-	handleSubmit = (event: FormEvent, submitType: EActions, formData: ICreateUpdateCategory,
+	private handleSubmit = (event: FormEvent, submitType: EActions, formData: ICreateUpdateCategory,
 	) => {
 		let submitFunction: Promise<AxiosResponse<void>>;
 		let successMessageText = "", errorMessageText = ""
 		if (submitType === EActions.create) {
-			submitFunction = categoryService.createCategory(formData);
 			successMessageText = CREATION_SUCCESS_MESSAGE;
 			errorMessageText = CREATION_ERROR_MESSAGE;
+			submitFunction = categoryService.createCategory(formData);
 		}
 		else if (submitType === EActions.update) {
-			submitFunction = categoryService.updateCategory(formData);
 			successMessageText = UPDATE_SUCCESS_MESSAGE;
 			errorMessageText = UPDATE_ERROR_MESSAGE;
+			submitFunction = categoryService.updateCategory(formData);
 		}
 		else {
 			console.log("Submit error");
@@ -94,7 +108,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 		event.preventDefault();
 	}
 
-	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	private handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		this.setState({ ...this.state, [event.target.name]: event.target.value });
 	};
 
