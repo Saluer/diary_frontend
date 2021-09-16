@@ -3,6 +3,7 @@ import FlowService from "./FlowService";
 import CategoryService from "../Category/CategoryService";
 import { IFlowFormState, IParams, EActions } from "../types";
 import { RouteComponentProps } from "react-router";
+import { Input } from "../Helpers/Inputs";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
@@ -108,27 +109,12 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 							{this.state.categoryName}
 						</span>
 						<br />
-						<label className="mt-2">Название:</label>
-						<input
-							name="name"
-							className="form-control w-25 mb-2"
-							type="text"
-							value={this.state.name || ""}
-							onChange={this.handleChange}
-						/>
-						<label>Описание:</label>
-						<input
-							name="description"
-							className="form-control w-50"
-							type="text"
-							value={this.state.description || ""}
-							onChange={this.handleChange}
-						/>
-						<input
-							className="btn btn-primary mt-2"
-							type="submit"
-							value="Submit"
-						/>
+						<Input labelText="Название" type="text" name="name"
+							value={this.state.name} onChange={this.handleChange} />
+						<Input labelText="Описание" type="text" name="description"
+							value={this.state.description} onChange={this.handleChange} />
+						<Input type="submit" name="submit"
+							value="Submit" />
 					</div>
 				</form>
 			);
