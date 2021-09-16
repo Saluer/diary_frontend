@@ -1,11 +1,11 @@
 import React, { FormEvent } from "react";
 import CategoryService from "./CategoryService";
 import { RouteComponentProps } from "react-router";
-import { IParams, ICategoryFormState, EActions, ICreateUpdateCategory } from "../types";
+import { IParams, ICategoryFormState, EActions, ICreateUpdateCategory, EEntityTypes } from "../types";
 import { Input } from "../Helpers/Inputs";
 import { AxiosResponse } from "axios";
-import { CategoryFormActions } from "./CategoryFormActions";
-const categoryFormActions = new CategoryFormActions();
+import { CategoryFormActions, FlowFormActions } from "./CategoryFormActions";
+
 const categoryService = new CategoryService();
 
 
@@ -16,19 +16,33 @@ const UPDATE_SUCCESS_MESSAGE = "Вы успешно обновили объек�
 const UPDATE_ERROR_MESSAGE = "Произошла ошибка при обновлении объекта"
 
 const MAIN_CATEGORY = 0;
+const NULL_FLOW = 0;
 //Передаём интерфейс состояний
-class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICategoryFormState> {
-	private params: IParams;
+
+
+
+const getFormActionsObject = (type=EEntityTypes.category) => {
+	if (type === EEntityTypes.category) { return new CategoryFormActions() }
+	else { return new FlowFormActions() }
+}
+
+class CategoryForm extends React.Component<RouteComponentProps<IParams> & {entityType:EEntityTypes}, ICategoryFormState> {
+	private categoryFormActions;
+	private params: IParams = {};
+	private L_flowID: number = NULL_FLOW;
 	private L_categoryID: number = MAIN_CATEGORY;
 	//Создаём объект с функциями, который для каждого вида формы имеет свои реализации функций
-	constructor(props: RouteComponentProps<IParams>) {
+	constructor(props: RouteComponentProps<IParams> & {entityType:EEntityTypes}) {
 		super(props);
 		this.state = {
-			upperCategoryName: CATEGORY_NAME_ERROR,
+			containerName: CATEGORY_NAME_ERROR,
 			name: "",
 			description: "",
 		};
 		this.params = this.props.match.params;
+		this.categoryFormActions = getFormActionsObject(EEntityTypes.category);
+		if (this.params.flowID)
+			this.L_flowID = parseInt(this.params.flowID);
 		if (this.params.categoryID)
 			this.L_categoryID = parseInt(this.params.categoryID);
 	}
@@ -37,48 +51,15 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 		//В зависимости от истинности условий выполняем нужный код объекта с функциями
 		//Однако чтобы передать ему управление состоянием, нужно передать функцию в колбэк
 		//Либо же, если есть Redux, то он сам изменит состояние компонента
-		if (this.params.action === EActions.create) {
-			if (this.L_categoryID) {
-				// categoryService.getCategory(this.L_categoryID).then((category: {
-				// 	data: {
-				// 		name: string;
-				// 		description: string;
-				// 	},
-				// 	upper_category_name: string;
-				// }) => {
-				// 	this.setState({ upperCategoryName: category.data.name });
-				// });
-				categoryFormActions.initialize(this.params.action,
-					(value:any) => {
-						this.setState(value)
-					}, this.L_categoryID)
-			}
+		if (this.L_categoryID) {
+			this.categoryFormActions.initialize(this.params.action,
+				(value: any) => {
+					this.setState(value)
+				}, this.L_categoryID)
 		}
-		else if (this.params.action === EActions.update)
-			if (this.L_categoryID) {
-				// categoryService.getCategory(this.L_categoryID).then((category: {
-				// 	data: {
-				// 		name: string;
-				// 		description: string;
-				// 	},
-				// 	upper_category_name: string;
-				// }) => {
-				// 	if (category.upper_category_name)
-				// 		this.setState({ upperCategoryName: category.upper_category_name });
-				// 	const categoryData = category.data;
-				// 	this.setState({
-				// 		name: categoryData.name,
-				// 		description: categoryData.description,
-				// 	});
-				// });
-				categoryFormActions.initialize(this.params.action,
-					(value:any) => {
-						this.setState(value);
-					}, this.L_categoryID)
-			}
 	}
 
-	private handleSubmit = (event: FormEvent, submitType: EActions, formData: ICreateUpdateCategory,
+	private handleSubmit = (event: FormEvent, submitType: string, formData: ICreateUpdateCategory,
 	) => {
 		let submitFunction: Promise<AxiosResponse<void>>;
 		let successMessageText = "", errorMessageText = ""
@@ -124,7 +105,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 					<h2>Создание новой категории</h2>
 					<label className="form-label mt-2">Надкатегория:</label>
 					<span className="mx-2 font-italic text-info">
-						{this.state.upperCategoryName}
+						{this.state.containerName}
 					</span>
 					<br />
 					<Input labelText="Название" type="text" name="name"

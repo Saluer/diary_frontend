@@ -3,14 +3,19 @@ export enum EActions {
 	update = "update"
 }
 
+export enum EEntityTypes{
+	category="category",
+	flow="flow"
+}
+
 export interface IParams {
 	categoryID?: string;
 	flowID?: string;
-	action?: EActions.create | EActions.update;
+	action?: string;
 }
 
 export interface ICategoryFormState {
-	upperCategoryName?: string;
+	containerName?: string;
 	name: string;
 	description: string;
 }
