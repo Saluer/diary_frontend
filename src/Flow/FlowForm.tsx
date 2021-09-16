@@ -99,59 +99,24 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 	};
 
 	render() {
-		if (this.params.action === "create")
-			return (
-				<form onSubmit={this.handleCreate}>
-					<div className="form-group">
-						<h2>Создание нового потока</h2>
-						<label className="form-label mt-2">Категория:</label>
-						<span className="mx-2 font-italic text-info">
-							{this.state.categoryName}
-						</span>
-						<br />
-						<Input labelText="Название" type="text" name="name"
-							value={this.state.name} onChange={this.handleChange} />
-						<Input labelText="Описание" type="text" name="description"
-							value={this.state.description} onChange={this.handleChange} />
-						<Input type="submit" name="submit"
-							value="Submit" />
-					</div>
-				</form>
-			);
-		else if (this.params.action === "update")
-			return (
-				<form onSubmit={this.handleUpdate}>
-					<div className="form-group">
-						<h2>Редактирование потока</h2>
-						<label className="form-label mt-2">Категория:</label>
-						<span className="mx-2 font-italic text-info">
-							{this.state.categoryName}
-						</span>
-						<br />
-						<label className="mt-2">Название:</label>
-						<input
-							name="name"
-							className="form-control w-25 mb-2"
-							type="text"
-							value={this.state.name || ""}
-							onChange={this.handleChange}
-						/>
-						<label>Описание:</label>
-						<input
-							name="description"
-							className="form-control w-50"
-							type="text"
-							value={this.state.description || ""}
-							onChange={this.handleChange}
-						/>
-						<input
-							className="btn btn-primary mt-2"
-							type="submit"
-							value="Submit"
-						/>
-					</div>
-				</form>
-			);
+		return (
+			<form onSubmit={this.params.action === "create" ? this.handleCreate : this.handleUpdate}>
+				<div className="form-group">
+					<h2>Создание нового потока</h2>
+					<label className="form-label mt-2">Категория:</label>
+					<span className="mx-2 font-italic text-info">
+						{this.state.categoryName}
+					</span>
+					<br />
+					<Input labelText="Название" type="text" name="name"
+						value={this.state.name} onChange={this.handleChange} />
+					<Input labelText="Описание" type="text" name="description"
+						value={this.state.description} onChange={this.handleChange} />
+					<Input type="submit" name="submit"
+						value="Submit" />
+				</div>
+			</form>
+		)
 	}
 }
 

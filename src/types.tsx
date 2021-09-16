@@ -21,6 +21,12 @@ export interface IFlowFormState {
 	description: string;
 }
 
+export interface ICreateUpdateCategory {
+	id?: number;
+	upperCategoryID?: number;
+	name: string;
+	description: string;
+}
 // export interface ICategoryAPI {
 // 	id?: string;
 // 	upperCategoryId?: string;

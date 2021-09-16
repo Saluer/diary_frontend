@@ -1,8 +1,9 @@
 import React, { FormEvent } from "react";
 import CategoryService from "./CategoryService";
 import { RouteComponentProps } from "react-router";
-import { IParams, ICategoryFormState, EActions } from "../types";
+import { IParams, ICategoryFormState, EActions, ICreateUpdateCategory } from "../types";
 import { Input } from "../Helpers/Inputs";
+import { AxiosResponse } from "axios";
 const categoryService = new CategoryService();
 
 
@@ -63,103 +64,65 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams>, ICatego
 			}
 	}
 
-	handleCreate = (event: FormEvent) => {
-		categoryService
-			.createCategory({
-				upperCategoryID: this.L_categoryID,
-				name: this.state.name,
-				description: this.state.description,
-			})
-			.then(() => {
-				alert(CREATION_SUCCESS_MESSAGE);
-				this.L_categoryID !== MAIN_CATEGORY
-					? this.props.history.push("/category/" + this.L_categoryID)
-					: this.props.history.push("/");
-			})
+	handleSubmit = (event: FormEvent, submitType: EActions, formData: ICreateUpdateCategory,
+	) => {
+		let submitFunction: Promise<AxiosResponse<void>>;
+		let successMessageText = "", errorMessageText = ""
+		if (submitType === EActions.create) {
+			submitFunction = categoryService.createCategory(formData);
+			successMessageText = CREATION_SUCCESS_MESSAGE;
+			errorMessageText = CREATION_ERROR_MESSAGE;
+		}
+		else if (submitType === EActions.update) {
+			submitFunction = categoryService.updateCategory(formData);
+			successMessageText = UPDATE_SUCCESS_MESSAGE;
+			errorMessageText = UPDATE_ERROR_MESSAGE;
+		}
+		else {
+			console.log("Submit error");
+			return
+		};
+		submitFunction.then(() => {
+			alert(successMessageText);
+			this.L_categoryID !== MAIN_CATEGORY
+				? this.props.history.push("/category/" + this.L_categoryID)
+				: this.props.history.push("/");
+		})
 			.catch(() => {
-				alert(CREATION_ERROR_MESSAGE);
+				alert(errorMessageText);
 			});
 		event.preventDefault();
-	};
-
-	handleUpdate = (event: FormEvent) => {
-		categoryService
-			.updateCategory({
-				id: this.L_categoryID,
-				name: this.state.name,
-				description: this.state.description,
-			})
-			.then(() => {
-				alert(UPDATE_SUCCESS_MESSAGE);
-				this.L_categoryID !== MAIN_CATEGORY
-					? this.props.history.push("/category/" + this.L_categoryID)
-					: this.props.history.push("/");
-			})
-			.catch(() => {
-				alert(UPDATE_ERROR_MESSAGE);
-			});
-		event.preventDefault();
-	};
+	}
 
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		this.setState({ ...this.state, [event.target.name]: event.target.value });
 	};
 
 	render() {
-		if (this.params.action === EActions.create)
-			return (
-				<form onSubmit={this.handleCreate}>
-					<div className="form-group">
-						<h2>Создание новой категории</h2>
-						<label className="form-label mt-2">Надкатегория:</label>
-						<span className="mx-2 font-italic text-info">
-							{this.state.upperCategoryName}
-						</span>
-						<br />
-						<Input labelText="Название" type="text" name="name"
-							value={this.state.name} onChange={this.handleChange} />
-						<Input labelText="Описание" type="text" name="description"
-							value={this.state.description} onChange={this.handleChange} />
-						<Input type="submit" name="submit"
-							value="Submit" />
-					</div>
-				</form>
-			);
-		else if (this.params.action === EActions.update)
-			return (
-				<form onSubmit={this.handleUpdate}>
-					<div className="form-group">
-						<h2>Редактирование категории</h2>
-						<label className="form-label mt-2">Надкатегория:</label>
-						<span className="mx-2 font-italic text-info">
-							{this.state.upperCategoryName}
-						</span>
-						<br />
+		return (
+			<form onSubmit={(event) => this.handleSubmit(event, this.params.action!,
+				{
+					id: this.L_categoryID,
+					name: this.state.name,
+					description: this.state.description,
+				})}>
+				<div className="form-group">
+					<h2>Создание новой категории</h2>
+					<label className="form-label mt-2">Надкатегория:</label>
+					<span className="mx-2 font-italic text-info">
+						{this.state.upperCategoryName}
+					</span>
+					<br />
+					<Input labelText="Название" type="text" name="name"
+						value={this.state.name} onChange={this.handleChange} />
+					<Input labelText="Описание" type="text" name="description"
+						value={this.state.description} onChange={this.handleChange} />
+					<Input type="submit" name="submit"
+						value="Submit" />
+				</div>
+			</form>
+		);
 
-						<label className="mt-2">Название:</label>
-						<input
-							name="name"
-							className="form-control w-25 mb-2"
-							type="text"
-							value={this.state.name || ""}
-							onChange={this.handleChange}
-						/>
-						<label>Описание:</label>
-						<input
-							name="description"
-							className="form-control w-50"
-							type="text"
-							value={this.state.description || ""}
-							onChange={this.handleChange}
-						/>
-						<input
-							className="btn btn-primary mt-2"
-							type="submit"
-							value="Submit"
-						/>
-					</div>
-				</form>
-			);
 	}
 }
 export default CategoryForm;

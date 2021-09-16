@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ICreateUpdateCategory } from "../types";
 const API_URL = "http://localhost:8000";
 
 export default class CategoryService {
@@ -41,12 +42,6 @@ interface IGetFullCategoryInfo {
 	upper_category_data: { name: string; description: string };
 }
 
-interface ICreateUpdateCategory {
-	id?: number;
-	upperCategoryID?: number;
-	name: string;
-	description: string;
-}
 
 interface IGetCategory {
 	data: {
