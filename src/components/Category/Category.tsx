@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CategoryService from "./CategoryService";
 import { Switch, Route, Link, useParams } from "react-router-dom";
-import CategoryForm from "./CategoryForm";
+import CUForm from "../Form/CUForm";
 import FlowsTable from "../Flow/FlowsTable";
 import { EEntityTypes } from "../../Helpers/types";
 const categoryService = new CategoryService();
@@ -11,11 +11,11 @@ const MAIN_CATEGORY = 0;
 const CategoryDispatcher = () => {
 	return (
 		<Switch>
-			<Route path="/:action(\w+)" exact render={(props) => <CategoryForm {...props} entityType={EEntityTypes.category} />} />
+			<Route path="/:action(\w+)" exact render={(props) => <CUForm {...props} entityType={EEntityTypes.category} />} />
 			<Route
 				path="/category/:categoryID(\d+)/:action(\w+)"
 				exact
-				render={(props) => <CategoryForm {...props} entityType={EEntityTypes.category} />}
+				render={(props) => <CUForm {...props} entityType={EEntityTypes.category} />}
 			/>
 			<Route path="/(category)?/:categoryID(\d+)?" exact component={CategoryInfo} />
 		</Switch>

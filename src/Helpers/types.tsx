@@ -14,7 +14,13 @@ export interface IParams {
 	action?: string;
 }
 
-export interface ICategoryFormState {
+export interface IFormParams {
+	categoryID?: string;
+	flowID?: string;
+	action: string;
+}
+
+export interface ICUFormState {
 	containerName?: string;
 	name: string;
 	description: string;

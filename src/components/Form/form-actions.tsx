@@ -1,6 +1,6 @@
-import { EActions, ICreateUpdateCategory } from "./Helpers/types";
-import CategoryService from "./components/Category/CategoryService";
-import FlowService from "./components/Flow/FlowService";
+import { EActions, ICreateUpdateCategory } from "../../Helpers/types";
+import CategoryService from "../Category/CategoryService";
+import FlowService from "../Flow/FlowService";
 import { AxiosResponse } from "axios";
 import {
 	CREATION_ERROR_MESSAGE,
@@ -8,27 +8,18 @@ import {
 	MAIN_CATEGORY,
 	UPDATE_ERROR_MESSAGE,
 	UPDATE_SUCCESS_MESSAGE,
-} from "./Helpers/constants";
+} from "../../Helpers/constants";
 
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
-abstract class EntityFormActions {
-	abstract initialize(actionType: any, callback: any, idGroup: any): any;
-	abstract handleSubmit(
-		submitType: string,
-		formData: ICreateUpdateCategory,
-		callback: any
-	): any;
-}
-
-export class CategoryFormActions extends EntityFormActions {
+export class CategoryFormActions {
 	private categoryID: number;
-	constructor(data: any) {
-		super();
+	constructor(data: { categoryID: number }) {
 		this.categoryID = data.categoryID;
 	}
-	initialize(actionType: any, callback: any, idGroup: any): any {
+	initialize(actionType: string, callback: (value: { containerName?: string, name?: string, description?: string }) => void,
+		idGroup: { categoryID: number, flowID?: number }): void {
 		if (actionType === EActions.create) {
 			categoryService.getCategory(idGroup.categoryID).then(
 				(category: {
@@ -64,8 +55,8 @@ export class CategoryFormActions extends EntityFormActions {
 	handleSubmit(
 		submitType: string,
 		formData: ICreateUpdateCategory,
-		callback: any
-	): any {
+		callback: (path: string) => void
+	): void {
 		let submitFunction: Promise<AxiosResponse<void>>;
 		let successMessageText = "",
 			errorMessageText = "",
@@ -107,15 +98,15 @@ export class CategoryFormActions extends EntityFormActions {
 	}
 }
 
-export class FlowFormActions extends EntityFormActions {
+export class FlowFormActions {
 	private categoryID: number;
 	private flowID: number;
-	constructor(data: any) {
-		super();
+	constructor(data: { categoryID: number, flowID: number }) {
 		this.categoryID = data.categoryID;
 		this.flowID = data.flowID;
 	}
-	initialize(actionType: any, callback: any, idGroup: any): any {
+	initialize(actionType: string, callback: (value: { containerName?: string, name?: string, description?: string }) => void,
+		idGroup: { categoryID: number, flowID: number }): void {
 		if (actionType === EActions.create) {
 			categoryService.getCategory(idGroup.categoryID).then(
 				(category: {
@@ -139,25 +130,22 @@ export class FlowFormActions extends EntityFormActions {
 	handleSubmit(
 		submitType: string,
 		formData: ICreateUpdateCategory,
-		callback: any
-	): any {
+		callback: (path: string) => void
+	): void {
 		let submitFunction: Promise<AxiosResponse<void>>;
 		let successMessageText = "",
 			errorMessageText = "",
 			path = "";
-		console.log(submitType);
 		switch (submitType) {
 			case EActions.update:
 				successMessageText = UPDATE_SUCCESS_MESSAGE;
 				errorMessageText = UPDATE_ERROR_MESSAGE;
-				console.log(formData)
 				submitFunction = flowService.updateFlow(formData);
 				path = "/category/" + this.categoryID + "/flow/" + this.flowID;
 				break;
 			case EActions.create:
 				successMessageText = CREATION_SUCCESS_MESSAGE;
 				errorMessageText = CREATION_ERROR_MESSAGE;
-				console.log(formData)
 				submitFunction = flowService.createFlow(formData);
 				path = "/category/" + this.categoryID;
 				break;

@@ -1,15 +1,12 @@
 import React, { FormEvent } from "react";
 import { RouteComponentProps } from "react-router";
 import {
-	IParams,
-	ICategoryFormState,
-	ICreateUpdateCategory,
+	ICUFormState,
 	EEntityTypes,
-	ICreateUpdateFlow,
+	IFormParams,
 } from "../../Helpers/types";
 import { Input } from "../../Helpers/Inputs";
-
-import { CategoryFormActions, FlowFormActions } from "../../FormActions";
+import { CategoryFormActions, FlowFormActions } from "./form-actions";
 import {
 	MAIN_CATEGORY_TITLE,
 	MAIN_CATEGORY,
@@ -26,19 +23,19 @@ const getFormActionsObject = (type = EEntityTypes.category, data: any) => {
 	}
 };
 
-class CategoryForm extends React.Component<
-	RouteComponentProps<IParams> & { entityType: EEntityTypes },
-	ICategoryFormState
+class CUForm extends React.Component<
+	RouteComponentProps<IFormParams> & { entityType: EEntityTypes },
+	ICUFormState
 > {
 	private formActions;
-	private params: IParams = {};
+	private params: IFormParams;
 	private L_flowID: number = NULL_FLOW;
 	private L_categoryID: number = MAIN_CATEGORY;
 	private title = "";
 	private data = {};
 	//Создаём объект с функциями, который для каждого вида формы имеет свои реализации функций
 	constructor(
-		props: RouteComponentProps<IParams> & { entityType: EEntityTypes }
+		props: RouteComponentProps<IFormParams> & { entityType: EEntityTypes }
 	) {
 		super(props);
 		this.state = {
@@ -75,10 +72,10 @@ class CategoryForm extends React.Component<
 		if (this.L_categoryID) {
 			this.formActions.initialize(
 				this.params.action,
-				(value: any) => {
+				(value: any): void => {
 					this.setState(value);
 				},
-				{categoryID:this.L_categoryID, flowID:this.L_flowID}
+				{ categoryID: this.L_categoryID, flowID: this.L_flowID }
 			);
 		}
 	}
@@ -150,4 +147,4 @@ class CategoryForm extends React.Component<
 		);
 	}
 }
-export default CategoryForm;
+export default CUForm;
