@@ -1,15 +1,26 @@
-import { EActions } from "../types";
+import { EActions, ICreateUpdateCategory } from "../types";
 import CategoryService from "./CategoryService";
 import FlowService from "../Flow/FlowService";
+import { AxiosResponse } from "axios";
+import {
+    CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY,
+    UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE
+} from "../Helpers/constants";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
 abstract class EntityFormActions {
     abstract initialize(actionType: any, callback: any, id: any): any;
-    abstract handleSubmit(): any;
+    abstract handleSubmit(submitType: string, formData: ICreateUpdateCategory, callback: any): any;
 }
 
 export class CategoryFormActions extends EntityFormActions {
+    private categoryID: number;
+    constructor(data: any) {
+        super();
+        this.categoryID = data.categoryID;
+        console.log(this)
+    }
     initialize(actionType: any, callback: any, id: any): any {
         if (actionType === EActions.create) {
             categoryService.getCategory(id).then((category: {
@@ -40,8 +51,36 @@ export class CategoryFormActions extends EntityFormActions {
             });
         }
     };
-    handleSubmit(): any {
+    handleSubmit(submitType: string, formData: ICreateUpdateCategory, callback: any): any {
+        let submitFunction: Promise<AxiosResponse<void>>;
+        let successMessageText = "", errorMessageText = "", path = "";
+        console.log(submitType)
+        switch (submitType) {
+            case EActions.update:
+                successMessageText = UPDATE_SUCCESS_MESSAGE;
+                errorMessageText = UPDATE_ERROR_MESSAGE;
+                submitFunction = categoryService.updateCategory(formData);
+                path = this.categoryID !== MAIN_CATEGORY ? "/category/" + this.categoryID : "/";
+                break;
+            case EActions.create:
+                successMessageText = CREATION_SUCCESS_MESSAGE;
+                errorMessageText = CREATION_ERROR_MESSAGE;
+                submitFunction = categoryService.createCategory(formData);
+                path = this.categoryID !== MAIN_CATEGORY ? "/category/" + this.categoryID : "/";
+                break;
+            default:
+                console.log("Submit error");
+                return;
+        }
 
+
+        submitFunction.then(() => {
+            alert(successMessageText);
+            callback(path)
+        })
+            .catch(() => {
+                alert(errorMessageText);
+            });
     };
 }
 

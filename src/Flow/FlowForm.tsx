@@ -4,17 +4,10 @@ import CategoryService from "../Category/CategoryService";
 import { IFlowFormState, IParams, EActions } from "../types";
 import { RouteComponentProps } from "react-router";
 import { Input } from "../Helpers/Inputs";
+import { CATEGORY_NAME_ERROR, CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY, NULL_FLOW, UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE } from "../Helpers/constants";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
-
-const MAIN_CATEGORY = 0;
-const NULL_FLOW = 0;
-const CATEGORY_NAME_ERROR = "Ошибка"
-const CREATION_SUCCESS_MESSAGE = "Вы успешно создали объект"
-const CREATION_ERROR_MESSAGE = "Произошла ошибка при создании объекта"
-const UPDATE_SUCCESS_MESSAGE = "Вы успешно обновили объект"
-const UPDATE_ERROR_MESSAGE = "Произошла ошибка при обновлении объекта"
 
 class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormState>  {
 	private params: IParams;

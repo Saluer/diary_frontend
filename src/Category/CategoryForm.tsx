@@ -1,33 +1,24 @@
 import React, { FormEvent } from "react";
-import CategoryService from "./CategoryService";
 import { RouteComponentProps } from "react-router";
-import { IParams, ICategoryFormState, EActions, ICreateUpdateCategory, EEntityTypes } from "../types";
+import { IParams, ICategoryFormState, ICreateUpdateCategory, EEntityTypes } from "../types";
 import { Input } from "../Helpers/Inputs";
-import { AxiosResponse } from "axios";
+
 import { CategoryFormActions, FlowFormActions } from "./CategoryFormActions";
+import { CATEGORY_NAME_ERROR, MAIN_CATEGORY, NULL_FLOW } from "../Helpers/constants";
 
-const categoryService = new CategoryService();
 
-
-const CATEGORY_NAME_ERROR = "Основная категория"
-const CREATION_SUCCESS_MESSAGE = "Вы успешно создали объект"
-const CREATION_ERROR_MESSAGE = "Произошла ошибка при создании объекта"
-const UPDATE_SUCCESS_MESSAGE = "Вы успешно обновили объект"
-const UPDATE_ERROR_MESSAGE = "Произошла ошибка при обновлении объекта"
-
-const MAIN_CATEGORY = 0;
-const NULL_FLOW = 0;
 //Передаём интерфейс состояний
 
 
-
-const getFormActionsObject = (type = EEntityTypes.category) => {
-	if (type === EEntityTypes.category) { return new CategoryFormActions() }
+//Создаётся объект и передаётся необходимый для дальнейших действий набор данных.
+//! Пока под вопросом такой способ
+const getFormActionsObject = (type = EEntityTypes.category, data: any) => {
+	if (type === EEntityTypes.category) { return new CategoryFormActions(data) }
 	else { return new FlowFormActions() }
 }
 
 class CategoryForm extends React.Component<RouteComponentProps<IParams> & { entityType: EEntityTypes }, ICategoryFormState> {
-	private categoryFormActions;
+	private formActions;
 	private params: IParams = {};
 	private L_flowID: number = NULL_FLOW;
 	private L_categoryID: number = MAIN_CATEGORY;
@@ -39,7 +30,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & { enti
 		switch (props.entityType) {
 			case EEntityTypes.flow: this.title = "Создать поток"; break;
 			case EEntityTypes.category: this.title = "Создать категорию"; break;
-			default: console.log("Ошибка!"); break;
+			default: alert("Ошибка!"); break;
 		}
 
 		this.state = {
@@ -48,12 +39,12 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & { enti
 			description: "",
 		};
 		this.params = this.props.match.params;
-		this.categoryFormActions = getFormActionsObject(this.props.entityType);
-		console.log(this.categoryFormActions);
 		if (this.params.flowID)
 			this.L_flowID = parseInt(this.params.flowID);
 		if (this.params.categoryID)
 			this.L_categoryID = parseInt(this.params.categoryID);
+		let data = { categoryID: this.L_categoryID }
+		this.formActions = getFormActionsObject(this.props.entityType, data);	
 	}
 
 	componentDidMount() {
@@ -61,7 +52,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & { enti
 		//Однако чтобы передать ему управление состоянием, нужно передать функцию в колбэк
 		//Либо же, если есть Redux, то он сам изменит состояние компонента
 		if (this.L_categoryID) {
-			this.categoryFormActions.initialize(this.params.action,
+			this.formActions.initialize(this.params.action,
 				(value: any) => {
 					this.setState(value)
 				}, this.L_categoryID)
@@ -72,32 +63,8 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & { enti
 	) => {
 		//TODO передать submitType, тип объекта и formData в объект с действиями
 		//TODO в зависимости от типа объекта и действия, он сам вызовет нужный метод
-
-		let submitFunction: Promise<AxiosResponse<void>>;
-		let successMessageText = "", errorMessageText = ""
-		if (submitType === EActions.create) {
-			successMessageText = CREATION_SUCCESS_MESSAGE;
-			errorMessageText = CREATION_ERROR_MESSAGE;
-			submitFunction = categoryService.createCategory(formData);
-		}
-		else if (submitType === EActions.update) {
-			successMessageText = UPDATE_SUCCESS_MESSAGE;
-			errorMessageText = UPDATE_ERROR_MESSAGE;
-			submitFunction = categoryService.updateCategory(formData);
-		}
-		else {
-			console.log("Submit error");
-			return;
-		};
-		submitFunction.then(() => {
-			alert(successMessageText);
-			this.L_categoryID !== MAIN_CATEGORY
-				? this.props.history.push("/category/" + this.L_categoryID)
-				: this.props.history.push("/");
-		})
-			.catch(() => {
-				alert(errorMessageText);
-			});
+		const callbackFunction = this.props.history.push;
+		this.formActions.handleSubmit(submitType, formData, callbackFunction);
 		event.preventDefault();
 	}
 
