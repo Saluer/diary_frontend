@@ -1,5 +1,9 @@
 import axios from "axios";
-import { ICreateUpdateCategory } from "../../Helpers/types";
+import {
+	ICreateUpdateCategory,
+	IGetCategory,
+	IGetFullCategoryInfo,
+} from "../../Helpers/types";
 const API_URL = "http://localhost:8000";
 
 export default class CategoryService {
@@ -8,6 +12,7 @@ export default class CategoryService {
 		const response = await axios.get<IGetFullCategoryInfo>(url);
 		return response.data;
 	}
+	//TODO рассмотреть возможность смены имени аргумента
 	async getCategoriesByURL(link: string) {
 		const url = `${API_URL}${link}`;
 		const response = await axios.get<IGetFullCategoryInfo>(url);
@@ -24,30 +29,11 @@ export default class CategoryService {
 	}
 	createCategory(category: ICreateUpdateCategory) {
 		const url = `${API_URL}/api/category/${category.upperCategoryID}`;
-		console.log(category)
+		console.log(category);
 		return axios.post<void>(url, category);
 	}
 	updateCategory(category: ICreateUpdateCategory) {
 		const url = `${API_URL}/api/category/${category.id}`;
 		return axios.put<void>(url, category);
 	}
-}
-
-interface IGetFullCategoryInfo {
-	categories_data: {
-		id: number;
-		name: string;
-		description: string;
-	}[];
-	nextLink: string;
-	upper_category_data: { name: string; description: string };
-}
-
-
-interface IGetCategory {
-	data: {
-		name: string;
-		description: string;
-	};
-	upper_category_name: string;
 }

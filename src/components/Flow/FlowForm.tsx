@@ -4,7 +4,7 @@ import CategoryService from "../Category/CategoryService";
 import { IFlowFormState, IParams, EActions } from "../../Helpers/types";
 import { RouteComponentProps } from "react-router";
 import { Input } from "../../Helpers/Inputs";
-import { CATEGORY_NAME_ERROR, CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY, NULL_FLOW, UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE } from "../../Helpers/constants";
+import { MAIN_CATEGORY_TITLE, CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY, NULL_FLOW, UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE } from "../../Helpers/constants";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
@@ -16,7 +16,7 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 	constructor(props: RouteComponentProps<IParams>) {
 		super(props);
 		this.state = {
-			categoryName: CATEGORY_NAME_ERROR,
+			categoryName: MAIN_CATEGORY_TITLE,
 			name: "",
 			description: "",
 		};
@@ -72,19 +72,6 @@ class FlowForm extends React.Component<RouteComponentProps<IParams>, IFlowFormSt
 	};
 
 	handleUpdate = (event: FormEvent) => {
-		flowService
-			.updateFlow({
-				name: this.state.name,
-				description: this.state.description,
-			}, this.L_flowID)
-			.then(() => {
-				alert(UPDATE_SUCCESS_MESSAGE);
-				this.props.history.push("/category/" + this.params.categoryID + "/flow/" + this.L_flowID);
-			})
-			.catch(() => {
-				alert(UPDATE_ERROR_MESSAGE);
-			});
-		event.preventDefault();
 	};
 
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
