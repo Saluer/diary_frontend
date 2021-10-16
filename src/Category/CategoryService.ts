@@ -24,6 +24,7 @@ export default class CategoryService {
 	}
 	createCategory(category: ICreateUpdateCategory) {
 		const url = `${API_URL}/api/category/${category.upperCategoryID}`;
+		console.log(category)
 		return axios.post<void>(url, category);
 	}
 	updateCategory(category: ICreateUpdateCategory) {

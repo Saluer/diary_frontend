@@ -21,26 +21,35 @@ const NULL_FLOW = 0;
 
 
 
-const getFormActionsObject = (type=EEntityTypes.category) => {
+const getFormActionsObject = (type = EEntityTypes.category) => {
 	if (type === EEntityTypes.category) { return new CategoryFormActions() }
 	else { return new FlowFormActions() }
 }
 
-class CategoryForm extends React.Component<RouteComponentProps<IParams> & {entityType:EEntityTypes}, ICategoryFormState> {
+class CategoryForm extends React.Component<RouteComponentProps<IParams> & { entityType: EEntityTypes }, ICategoryFormState> {
 	private categoryFormActions;
 	private params: IParams = {};
 	private L_flowID: number = NULL_FLOW;
 	private L_categoryID: number = MAIN_CATEGORY;
+	private title = "";
 	//Создаём объект с функциями, который для каждого вида формы имеет свои реализации функций
-	constructor(props: RouteComponentProps<IParams> & {entityType:EEntityTypes}) {
+	constructor(props: RouteComponentProps<IParams> & { entityType: EEntityTypes }) {
 		super(props);
+		console.log(props);
+		switch (props.entityType) {
+			case EEntityTypes.flow: this.title = "Создать поток"; break;
+			case EEntityTypes.category: this.title = "Создать категорию"; break;
+			default: console.log("Ошибка!"); break;
+		}
+
 		this.state = {
 			containerName: CATEGORY_NAME_ERROR,
 			name: "",
 			description: "",
 		};
 		this.params = this.props.match.params;
-		this.categoryFormActions = getFormActionsObject(EEntityTypes.category);
+		this.categoryFormActions = getFormActionsObject(this.props.entityType);
+		console.log(this.categoryFormActions);
 		if (this.params.flowID)
 			this.L_flowID = parseInt(this.params.flowID);
 		if (this.params.categoryID)
@@ -61,6 +70,9 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & {entit
 
 	private handleSubmit = (event: FormEvent, submitType: string, formData: ICreateUpdateCategory,
 	) => {
+		//TODO передать submitType, тип объекта и formData в объект с действиями
+		//TODO в зависимости от типа объекта и действия, он сам вызовет нужный метод
+
 		let submitFunction: Promise<AxiosResponse<void>>;
 		let successMessageText = "", errorMessageText = ""
 		if (submitType === EActions.create) {
@@ -75,7 +87,7 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & {entit
 		}
 		else {
 			console.log("Submit error");
-			return
+			return;
 		};
 		submitFunction.then(() => {
 			alert(successMessageText);
@@ -97,12 +109,15 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & {entit
 		return (
 			<form onSubmit={(event) => this.handleSubmit(event, this.params.action!,
 				{
+					//TODO Стоит провести рефакторинг, чтобы не передавалось два вида id с
+					//TODO одинаковым кодом получения значения. Опасно.
 					id: this.L_categoryID,
+					upperCategoryID: this.L_categoryID,
 					name: this.state.name,
 					description: this.state.description,
 				})}>
 				<div className="form-group">
-					<h2>Создание новой категории</h2>
+					<h2>{this.title}</h2>
 					<label className="form-label mt-2">Надкатегория:</label>
 					<span className="mx-2 font-italic text-info">
 						{this.state.containerName}

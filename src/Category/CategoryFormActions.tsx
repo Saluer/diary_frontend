@@ -40,7 +40,9 @@ export class CategoryFormActions extends EntityFormActions {
             });
         }
     };
-    handleSubmit(): any { };
+    handleSubmit(): any {
+
+    };
 }
 
 export class FlowFormActions extends EntityFormActions {
@@ -58,11 +60,11 @@ export class FlowFormActions extends EntityFormActions {
         }
         else if (actionType === EActions.update) {
             flowService.getFlow(id).then((flow) => {
-				if (flow.category_name)
-					callback({ containerName: flow.category_name });
-				const flowData = flow.data;
-				callback({ name: flowData.name, description: flowData.description });
-			});
+                if (flow.category_name)
+                    callback({ containerName: flow.category_name });
+                const flowData = flow.data;
+                callback({ name: flowData.name, description: flowData.description });
+            });
         }
     };
     handleSubmit(): any { };

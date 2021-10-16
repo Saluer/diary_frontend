@@ -3,9 +3,9 @@ export enum EActions {
 	update = "update"
 }
 
-export enum EEntityTypes{
-	category="category",
-	flow="flow"
+export enum EEntityTypes {
+	category = "category",
+	flow = "flow"
 }
 
 export interface IParams {
