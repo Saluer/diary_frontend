@@ -1,11 +1,12 @@
-import { EActions, ICreateUpdateCategory } from "../types";
-import CategoryService from "./CategoryService";
-import FlowService from "../Flow/FlowService";
+import { EActions, ICreateUpdateCategory } from "./Helpers/types";
+import CategoryService from "./components/Category/CategoryService";
+import FlowService from "./components/Flow/FlowService";
 import { AxiosResponse } from "axios";
 import {
     CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY,
     UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE
-} from "../Helpers/constants";
+} from "./Helpers/constants";
+
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 
@@ -73,7 +74,6 @@ export class CategoryFormActions extends EntityFormActions {
                 return;
         }
 
-
         submitFunction.then(() => {
             alert(successMessageText);
             callback(path)
@@ -106,6 +106,35 @@ export class FlowFormActions extends EntityFormActions {
             });
         }
     };
-    handleSubmit(): any { };
+    handleSubmit(submitType: string, formData: ICreateUpdateCategory, callback: any): any {
+        let submitFunction: Promise<AxiosResponse<void>>;
+        let successMessageText = "", errorMessageText = "", path = "";
+        console.log(submitType)
+        switch (submitType) {
+            case EActions.update:
+                successMessageText = UPDATE_SUCCESS_MESSAGE;
+                errorMessageText = UPDATE_ERROR_MESSAGE;
+                submitFunction = categoryService.updateCategory(formData);
+                path = this.categoryID !== MAIN_CATEGORY ? "/category/" + this.categoryID : "/";
+                break;
+            case EActions.create:
+                successMessageText = CREATION_SUCCESS_MESSAGE;
+                errorMessageText = CREATION_ERROR_MESSAGE;
+                submitFunction = categoryService.createCategory(formData);
+                path = this.categoryID !== MAIN_CATEGORY ? "/category/" + this.categoryID : "/";
+                break;
+            default:
+                console.log("Submit error");
+                return;
+        }
+
+        submitFunction.then(() => {
+            alert(successMessageText);
+            callback(path)
+        })
+            .catch(() => {
+                alert(errorMessageText);
+            });
+    };
 }
 

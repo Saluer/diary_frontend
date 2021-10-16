@@ -1,14 +1,10 @@
 import React, { FormEvent } from "react";
 import { RouteComponentProps } from "react-router";
-import { IParams, ICategoryFormState, ICreateUpdateCategory, EEntityTypes } from "../types";
-import { Input } from "../Helpers/Inputs";
+import { IParams, ICategoryFormState, ICreateUpdateCategory, EEntityTypes } from "../../Helpers/types";
+import { Input } from "../../Helpers/Inputs";
 
-import { CategoryFormActions, FlowFormActions } from "./CategoryFormActions";
-import { CATEGORY_NAME_ERROR, MAIN_CATEGORY, NULL_FLOW } from "../Helpers/constants";
-
-
-//Передаём интерфейс состояний
-
+import { CategoryFormActions, FlowFormActions } from "../../FormActions";
+import { CATEGORY_NAME_ERROR, MAIN_CATEGORY, NULL_FLOW } from "../../Helpers/constants";
 
 //Создаётся объект и передаётся необходимый для дальнейших действий набор данных.
 //! Пока под вопросом такой способ
@@ -23,14 +19,22 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & { enti
 	private L_flowID: number = NULL_FLOW;
 	private L_categoryID: number = MAIN_CATEGORY;
 	private title = "";
+	private data = {};
 	//Создаём объект с функциями, который для каждого вида формы имеет свои реализации функций
 	constructor(props: RouteComponentProps<IParams> & { entityType: EEntityTypes }) {
 		super(props);
 		console.log(props);
 		switch (props.entityType) {
-			case EEntityTypes.flow: this.title = "Создать поток"; break;
-			case EEntityTypes.category: this.title = "Создать категорию"; break;
-			default: alert("Ошибка!"); break;
+			case EEntityTypes.flow:
+				this.data = { categoryID: this.L_categoryID, flowID: this.L_flowID };
+				this.title = "Создать поток";
+				break;
+			case EEntityTypes.category:
+				this.data = { categoryID: this.L_categoryID };
+				this.title = "Создать категорию";
+				break;
+			default: alert("Ошибка!");
+				break;
 		}
 
 		this.state = {
@@ -43,8 +47,8 @@ class CategoryForm extends React.Component<RouteComponentProps<IParams> & { enti
 			this.L_flowID = parseInt(this.params.flowID);
 		if (this.params.categoryID)
 			this.L_categoryID = parseInt(this.params.categoryID);
-		let data = { categoryID: this.L_categoryID }
-		this.formActions = getFormActionsObject(this.props.entityType, data);	
+
+		this.formActions = getFormActionsObject(this.props.entityType, this.data);
 	}
 
 	componentDidMount() {

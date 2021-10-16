@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import FlowService from "./FlowService";
-import { IParams } from "../types";
+import { IParams } from "../../Helpers/types";
 const flowService = new FlowService();
 
 const MAIN_CATEGORY = 0;

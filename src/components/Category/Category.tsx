@@ -3,7 +3,7 @@ import CategoryService from "./CategoryService";
 import { Switch, Route, Link, useParams } from "react-router-dom";
 import CategoryForm from "./CategoryForm";
 import FlowsTable from "../Flow/FlowsTable";
-import { EEntityTypes } from "../types";
+import { EEntityTypes } from "../../Helpers/types";
 const categoryService = new CategoryService();
 
 const MAIN_CATEGORY = 0;

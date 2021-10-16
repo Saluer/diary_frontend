@@ -1,10 +1,10 @@
 import React, { FormEvent } from "react";
 import FlowService from "./FlowService";
 import CategoryService from "../Category/CategoryService";
-import { IFlowFormState, IParams, EActions } from "../types";
+import { IFlowFormState, IParams, EActions } from "../../Helpers/types";
 import { RouteComponentProps } from "react-router";
-import { Input } from "../Helpers/Inputs";
-import { CATEGORY_NAME_ERROR, CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY, NULL_FLOW, UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE } from "../Helpers/constants";
+import { Input } from "../../Helpers/Inputs";
+import { CATEGORY_NAME_ERROR, CREATION_ERROR_MESSAGE, CREATION_SUCCESS_MESSAGE, MAIN_CATEGORY, NULL_FLOW, UPDATE_ERROR_MESSAGE, UPDATE_SUCCESS_MESSAGE } from "../../Helpers/constants";
 const categoryService = new CategoryService();
 const flowService = new FlowService();
 

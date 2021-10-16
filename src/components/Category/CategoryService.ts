@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ICreateUpdateCategory } from "../types";
+import { ICreateUpdateCategory } from "../../Helpers/types";
 const API_URL = "http://localhost:8000";
 
 export default class CategoryService {

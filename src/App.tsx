@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter, Switch, Link, Route } from "react-router-dom";
-import CategoryDispatcher from "./Category/Category";
-import FlowDispatcher from "./Flow/Flow";
+import CategoryDispatcher from "./components/Category/Category";
+import FlowDispatcher from "./components/Flow/Flow";
 import "./App.css";
 
 const BaseLayout = () => (

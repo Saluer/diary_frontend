@@ -1,7 +1,6 @@
 import { Switch, Route } from "react-router-dom";
-// import FlowForm from "./FlowForm";
 import CategoryForm from "../Category/CategoryForm";
-import { EEntityTypes } from "../types";
+import { EEntityTypes } from "../../Helpers/types";
 
 const FlowDispatcher = () => {
 	return (
