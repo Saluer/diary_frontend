@@ -25,6 +25,5 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "typescript": "^4.4.2",
-    "web-vitals": "^1.1.2"
-    "@types/react-router-dom": "^5.1.8",
-    "jest": "^27.2.5"
+    "web-vitals": "^1.1.2",
+    "@types/react-router-dom": "^5.1.8"
