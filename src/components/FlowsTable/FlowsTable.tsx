@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FlowService } from "../FlowService";
+import { MAIN_CATEGORY } from "../utils/constants";
 import { IParams } from "../utils/types";
+
 const flowService = new FlowService();
 
-const MAIN_CATEGORY = 0;
-
-export function FlowsTable() {
+export function FlowsTable(): JSX.Element {
 	const [flows, setFlows] = useState<{
 		id: number;
 		name: string;
