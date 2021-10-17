@@ -4,26 +4,22 @@ import {
 	ICUFormState,
 	EEntityTypes,
 	IFormParams,
-} from "../../Helpers/types";
-import { Input } from "../../Helpers/Inputs";
-import { CategoryFormActions, FlowFormActions } from "./form-actions";
-import {
-	MAIN_CATEGORY_TITLE,
-	MAIN_CATEGORY,
-	NULL_FLOW,
-} from "../../Helpers/constants";
+} from "../utils/types";
+import { Input } from "../form-elements/Inputs";
+import { CategoryFormActions, FlowFormActions } from "../Actions/form-actions";
+import { NULL_FLOW, MAIN_CATEGORY, MAIN_CATEGORY_TITLE } from "../utils/constants";
 
 //Создаётся объект и передаётся необходимый для дальнейших действий набор данных.
 //! Пока под вопросом такой способ
-const getFormActionsObject = (type = EEntityTypes.category, data: any) => {
+function getFormActionsObject({ type = EEntityTypes.category, data }: { type: EEntityTypes; data: any; }): CategoryFormActions | FlowFormActions {
 	if (type === EEntityTypes.category) {
 		return new CategoryFormActions(data);
 	} else {
 		return new FlowFormActions(data);
 	}
-};
+}
 
-class CUForm extends React.Component<
+export class CUForm extends React.Component<
 	RouteComponentProps<IFormParams> & { entityType: EEntityTypes },
 	ICUFormState
 > {
@@ -54,7 +50,6 @@ class CUForm extends React.Component<
 				this.title = "Поток";
 				break;
 			case EEntityTypes.category:
-				console.log(this.L_categoryID);
 				this.data = { categoryID: this.L_categoryID };
 				this.title = "Категория";
 				break;
@@ -62,7 +57,7 @@ class CUForm extends React.Component<
 				alert("Ошибка!");
 				break;
 		}
-		this.formActions = getFormActionsObject(this.props.entityType, this.data);
+		this.formActions = getFormActionsObject({ type: this.props.entityType, data: this.data });
 	}
 
 	componentDidMount() {
@@ -147,4 +142,3 @@ class CUForm extends React.Component<
 		);
 	}
 }
-export default CUForm;

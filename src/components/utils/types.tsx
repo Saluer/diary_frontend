@@ -64,7 +64,7 @@ export interface ICreateUpdateFlow {
 	name: string;
 	description: string;
 }
-export interface IGetFlowsList{
+export interface IGetFlowsList {
 	flows_data: {
 		id: number;
 		name: string;
@@ -85,6 +85,6 @@ export interface IGetFlow {
 		name: string;
 		description: string;
 	};
-	category_name:string;
+	category_name: string;
 }
 

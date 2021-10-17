@@ -1,6 +1,6 @@
-import { EActions, ICreateUpdateCategory } from "../../Helpers/types";
-import CategoryService from "../Category/CategoryService";
-import FlowService from "../Flow/FlowService";
+import { EActions, ICreateUpdateCategory } from "../../utils/types";
+import { CategoryService } from "../../Category/CategoryService";
+import { FlowService } from "../../FlowService";
 import { AxiosResponse } from "axios";
 import {
 	CREATION_ERROR_MESSAGE,
@@ -8,7 +8,7 @@ import {
 	MAIN_CATEGORY,
 	UPDATE_ERROR_MESSAGE,
 	UPDATE_SUCCESS_MESSAGE,
-} from "../../Helpers/constants";
+} from "../../utils/constants";
 
 const categoryService = new CategoryService();
 const flowService = new FlowService();
@@ -120,7 +120,7 @@ export class FlowFormActions {
 				}
 			);
 		} else if (actionType === EActions.update) {
-			flowService.getFlow(idGroup.flowID).then((flow) => {
+			flowService.getFlow(idGroup.flowID).then((flow: any) => {
 				if (flow.category_name) callback({ containerName: flow.category_name });
 				const flowData = flow.data;
 				callback({ name: flowData.name, description: flowData.description });

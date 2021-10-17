@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import FlowService from "./FlowService";
-import { IParams } from "../../Helpers/types";
+import { FlowService } from "../FlowService";
+import { IParams } from "../utils/types";
 const flowService = new FlowService();
 
 const MAIN_CATEGORY = 0;
 
-const FlowsTable = () => {
+export function FlowsTable() {
 	const [flows, setFlows] = useState<{
 		id: number;
 		name: string;
@@ -18,7 +18,7 @@ const FlowsTable = () => {
 		L_categoryID = parseInt(categoryID);
 	useEffect(() => {
 		if (L_categoryID)
-			flowService.getFlows(L_categoryID).then((response) => {
+			flowService.getFlows(L_categoryID).then((response: any) => {
 				setFlows(response.flows_data);
 			});
 		return () => {
@@ -50,8 +50,7 @@ const FlowsTable = () => {
 								id={flow.id}
 								name={flow.name}
 								description={flow.description}
-								handleDelete={handleDelete}
-							/>
+								handleDelete={handleDelete} />
 						))}
 					</tbody>
 				</table>
@@ -65,7 +64,7 @@ const FlowsTable = () => {
 			)}
 		</div>
 	);
-};
+}
 
 const Flow = (props: { id: number, name: string, description: string, handleDelete: (id: number) => void }) => {
 	const { categoryID } = useParams<{ categoryID: string }>();

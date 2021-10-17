@@ -3,10 +3,10 @@ import {
 	ICreateUpdateCategory,
 	IGetCategory,
 	IGetFullCategoryInfo,
-} from "../../Helpers/types";
+} from "../../utils/types";
 const API_URL = "http://localhost:8000";
 
-export default class CategoryService {
+export class CategoryService {
 	async getCategories(upperCategoryID: number) {
 		const url = `${API_URL}/api/categories/${upperCategoryID}`;
 		const response = await axios.get<IGetFullCategoryInfo>(url);

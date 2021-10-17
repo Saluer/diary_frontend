@@ -1,12 +1,8 @@
 import axios from "axios";
-import {
-	ICreateUpdateFlow,
-	IGetFlow,
-	IGetFlowsList,
-} from "../../Helpers/types";
+import { ICreateUpdateFlow, IGetFlow, IGetFlowsList } from "../utils/types";
 const API_URL = "http://localhost:8000";
 
-export default class FlowSerivce {
+export class FlowService {
 	async getFlows(categoryID: number) {
 		const url = `${API_URL}/api/flows/${categoryID}`;
 		const response = await axios.get<IGetFlowsList>(url);

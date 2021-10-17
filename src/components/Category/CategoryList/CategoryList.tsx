@@ -1,37 +1,11 @@
 import { useState, useEffect } from "react";
-import CategoryService from "./CategoryService";
-import { Switch, Route, Link, useParams } from "react-router-dom";
-import CUForm from "../Form/CUForm";
-import FlowsTable from "../Flow/FlowsTable";
-import { EEntityTypes } from "../../Helpers/types";
-const categoryService = new CategoryService();
+import { Link, useParams } from "react-router-dom";
+import { MAIN_CATEGORY } from "../../utils/constants";
+import { CategoryService } from "../CategoryService";
 
-const MAIN_CATEGORY = 0;
+export const categoryService = new CategoryService();
 
-const CategoryDispatcher = () => {
-	return (
-		<Switch>
-			<Route path="/:action(\w+)" exact render={(props) => <CUForm {...props} entityType={EEntityTypes.category} />} />
-			<Route
-				path="/category/:categoryID(\d+)/:action(\w+)"
-				exact
-				render={(props) => <CUForm {...props} entityType={EEntityTypes.category} />}
-			/>
-			<Route path="/(category)?/:categoryID(\d+)?" exact component={CategoryInfo} />
-		</Switch>
-	);
-};
-
-const CategoryInfo = () => {
-	return (
-		<div>
-			<CategoryList />
-			<FlowsTable />
-		</div>
-	);
-};
-
-const CategoryList = () => {
+export function CategoryList(): JSX.Element {
 	const [categories, setCategories] = useState<{
 		id: number;
 		name: string;
@@ -44,13 +18,13 @@ const CategoryList = () => {
 	//Функция ниже позволяет не передавать и получать props в списке параметров, что удобно.
 	//Вдобавок, не приходится писать длинный код деконструкции
 	//Считай, функция берёт данные из роутера, не из параметров
-	const { categoryID } = useParams<{ categoryID?: string }>();
+	const { categoryID } = useParams<{ categoryID?: string; }>();
 	let L_categoryID = MAIN_CATEGORY;
 	if (categoryID)
 		L_categoryID = parseInt(categoryID);
 
 	useEffect(() => {
-		categoryService.getCategories(L_categoryID).then((response) => {
+		categoryService.getCategories(L_categoryID).then((response: any) => {
 			setCategories(response.categories_data);
 			setNextPageURL(response.nextLink);
 			//? Стоит ли поменять код? Больно тяжело досталось мне получение имени родительской категории
@@ -66,13 +40,13 @@ const CategoryList = () => {
 
 	const handleDelete = (id: number) => {
 		categoryService.deleteCategory(id).then(() => {
-			const newCategoriesCollection = categories.filter((category: { id: number }) => category.id !== id);
+			const newCategoriesCollection = categories.filter((category: { id: number; }) => category.id !== id);
 			setCategories(newCategoriesCollection);
 		});
 	};
 
 	const nextPage = () => {
-		categoryService.getCategoriesByURL(nextPageURL).then((response) => {
+		categoryService.getCategoriesByURL(nextPageURL).then((response: any) => {
 			setCategories(response.categories_data);
 			setNextPageURL(response.nextLink);
 		});
@@ -91,7 +65,7 @@ const CategoryList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{categories.map((category: { id: number, name: string, description: string }) => (
+					{categories.map((category: { id: number; name: string; description: string; }) => (
 						<tr key={category.id}>
 							<td>{category.id} </td>
 							<td>{category.name}</td>
@@ -133,5 +107,4 @@ const CategoryList = () => {
 			</Link>
 		</div>
 	);
-};
-export default CategoryDispatcher;
+}

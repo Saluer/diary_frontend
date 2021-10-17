@@ -1,8 +1,9 @@
 import { Switch, Route } from "react-router-dom";
-import CUForm from "../Form/CUForm";
-import { EEntityTypes } from "../../Helpers/types";
+import { CUForm } from "../CUForm";
+import { EEntityTypes } from "../utils/types";
+import { FlowInfo } from "../FlowInfo";
 
-const FlowDispatcher = () => {
+export function FlowDispatcher(): JSX.Element {
 	return (
 		<Switch>
 			<Route path="/category/:categoryID(\d+)/flow/:flowID(\d+)" exact component={FlowInfo} />
@@ -12,9 +13,4 @@ const FlowDispatcher = () => {
 				entityType={EEntityTypes.flow} />} />
 		</Switch>
 	);
-};
-
-const FlowInfo = () => {
-	return <p>Информация о потоке</p>
-};
-export default FlowDispatcher;
+}
