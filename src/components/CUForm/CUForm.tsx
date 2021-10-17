@@ -5,7 +5,7 @@ import {
 	EEntityTypes,
 	IFormParams,
 } from "../utils/types";
-import { Input } from "../form-elements/Inputs";
+import { Input } from "../form-elements";
 import { CategoryFormActions, FlowFormActions } from "../Actions/form-actions";
 import { NULL_FLOW, MAIN_CATEGORY, MAIN_CATEGORY_TITLE } from "../utils/constants";
 
