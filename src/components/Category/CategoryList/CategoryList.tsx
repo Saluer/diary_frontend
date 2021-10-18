@@ -54,8 +54,8 @@ export function CategoryList(): JSX.Element {
 
 	return (
 		<div className="categories-list">
-			<h2>{upperCategoryName}</h2>
-			<h4>{description}</h4>
+			<h2>Название категории: {upperCategoryName}</h2>
+			<h4>Описание категории: {description}</h4>
 			<table className="table">
 				<thead>
 					<tr>
